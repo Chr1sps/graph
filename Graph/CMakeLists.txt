@@ -1,1 +1,1 @@
-add_library(Graph INTERFACE)
+add_library(Graph Graph.cpp)
