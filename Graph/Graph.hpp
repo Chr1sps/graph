@@ -12,21 +12,24 @@ class Graph
 
     public:
         Edge(int, E);
+        const int get_vertex();
     };
 
-    class Vertex : V, std::vector<E>
+    class Vertex : public std::vector<Edge>, public V
     {
+        // public:
+        //     using std::vector<Edge>::push_back;
     };
 
-    std::shared_ptr<std::vector<V>> _graph;
+    std::vector<Vertex> _graph;
 
 public:
-    Graph();
-    Graph(int);
+    Graph(int = 0);
     ~Graph();
 
-    void edge_dir(int, int, E);
-    void edge_bidir(int, int, E);
+    void edge_dir(int, int, E = E());
+    void edge_bidir(int, int, E = E());
+    std::string to_string();
     friend std::ofstream &operator<<(std::ofstream &, Graph<V, E>);
 };
 #include "Graph.cpp"
