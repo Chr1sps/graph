@@ -3,11 +3,11 @@
 #include "Graph.hpp"
 #include <string>
 template <typename V, typename E>
-inline Graph<V, E>::Edge::Edge(int vertex, E edge) : _vertex(vertex), E(edge)
+inline Graph<V, E>::Edge::Edge(int vertex, E edge) : E(edge), _vertex(vertex)
 {
 }
 template <typename V, typename E>
-inline const int Graph<V, E>::Edge::get_vertex()
+inline int Graph<V, E>::Edge::get_vertex()
 {
     return _vertex;
 }

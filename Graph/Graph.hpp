@@ -12,7 +12,7 @@ class Graph
 
     public:
         Edge(int, E);
-        const int get_vertex();
+        int get_vertex();
     };
 
     class Vertex : public std::vector<Edge>, public V

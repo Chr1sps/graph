@@ -7,7 +7,15 @@ configure_file(Graph_config.hpp.in Graph_config.hpp)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 
-# add_subdirectory(tests)
+set(GCC_WARNINGS_COMPILE_FLAGS "-Wall -Wextra -Wpedantic -Werror -Wunused")
+SET(GCC_UB_COMPILE_FLAGS "-fsanitize=undefined")
+
+set(
+    CMAKE_CXX_FLAGS
+    "${CMAKE_CXX_FLAGS}
+     ${GCC_WARNINGS_COMPILE_FLAGS}
+     ${GCC_UB_COMPILE_FLAGS}"
+)
 
 # add_library(compiler_flags INTERFACE)
 # target_compile_features(compiler_flags INTERFACE cxx_std_20)
@@ -19,11 +27,27 @@ set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 # "$<${gcc_like_cxx}:$<BUILD_INTERFACE:-Wall;-Wextra;-Wshadow;-Wformat=2;-Wunused;-Wpedantic>>"
 # "$<${msvc_cxx}:$<BUILD_INTERFACE:-W3>>"
 # )
-# add_executable(graph_tests.out tests/graph_tests.cpp)
+
+# Catch2 FetchContent declaration
+Include(FetchContent)
+FetchContent_Declare(
+    Catch2
+    GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+    GIT_TAG origin/devel)
+FetchContent_MakeAvailable(Catch2)
+
 add_subdirectory(Graph)
+add_subdirectory(tests)
 
-add_executable(graph_tests.out main.cpp)
+add_executable(main.out main.cpp)
+add_executable(graph_tests.out tests/graph_tests.cpp)
 
+target_include_directories(
+    main.out
+    PUBLIC
+    "${PROJECT_BINARY_DIR}"
+    "${PROJECT_SOURCE_DIR}/Graph"
+)
 target_include_directories(
     graph_tests.out
     PUBLIC
@@ -31,4 +55,10 @@ target_include_directories(
     "${PROJECT_SOURCE_DIR}/Graph"
 )
 
-target_link_libraries(graph_tests.out PUBLIC Graph)
+target_link_libraries(main.out PUBLIC Graph)
+target_link_libraries(graph_tests.out PUBLIC Graph Catch2::Catch2WithMain)
+
+list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR/extras})
+include(CTest)
+include(Catch)
+catch_discover_tests(graph_tests.out)
