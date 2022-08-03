@@ -1,31 +1,14 @@
 #ifndef __GRAPH_HPP_CHRISPS__
 #define __GRAPH_HPP_CHRISPS__
 #include <cstddef>
+#include <map>
 #include <memory>
 #include <optional>
 #include <vector>
 template <typename V, typename E>
 class Graph
 {
-    class Edge : public std::optional<E>
-    {
-        int vertex_;
-
-    public:
-        Edge(int);
-        Edge(int, E);
-        int get_vertex();
-
-        // using std::optional<E>::operator==;
-        // using std::optional<E>::operator!=;
-        // using std::optional<E>::operator<;
-        // using std::optional<E>::operator<=;
-        // using std::optional<E>::operator>;
-        // using std::optional<E>::operator>=;
-        // using std::optional<E>::operator<=>;
-    };
-
-    class Vertex : public std::vector<Edge>, public std::optional<V>
+    class Vertex : public std::map<int, std::optional<E>>, public std::optional<V>
     {
 
     public:
@@ -38,23 +21,21 @@ class Graph
         using std::optional<V>::value_or;
         using std::optional<V>::reset;
 
-        using std::vector<Edge>::operator[];
-        using std::vector<Edge>::push_back;
-        using std::vector<Edge>::begin;
-        using std::vector<Edge>::end;
+        using std::map<int, std::optional<E>>::operator[];
+        using std::map<int, std::optional<E>>::insert;
+        using std::map<int, std::optional<E>>::begin;
+        using std::map<int, std::optional<E>>::end;
     };
 
-    std::vector<Vertex> graph_;
+    std::map<int, Vertex> graph_;
 
 public:
-    Graph(int = 0);
+    Graph();
     ~Graph();
 
-    void edge_dir(int, int);
-    void edge_dir(int, int, E);
+    void edge_dir(int, int, std::optional<E> = std::nullopt);
 
-    void edge_bidir(int, int);
-    void edge_bidir(int, int, E);
+    void edge_bidir(int, int, std::optional<E> = std::nullopt);
 
     E get_edge_data(int, int);
     V get_vertex_data(int);
