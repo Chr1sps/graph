@@ -1,35 +1,47 @@
 #ifndef __GRAPH_HPP_CHRISPS__
 #define __GRAPH_HPP_CHRISPS__
 #include <cstddef>
-#include <iostream>
 #include <memory>
+#include <optional>
 #include <vector>
-template <typename V = std::nullptr_t, typename E = std::nullptr_t>
+template <typename V, typename E>
 class Graph
 {
-    class Edge
+    class Edge : public std::optional<E>
     {
         int vertex_;
-        E data_;
 
     public:
         Edge(int);
         Edge(int, E);
         int get_vertex();
-        void set_data(const E &);
-        const E get_data();
+
+        // using std::optional<E>::operator==;
+        // using std::optional<E>::operator!=;
+        // using std::optional<E>::operator<;
+        // using std::optional<E>::operator<=;
+        // using std::optional<E>::operator>;
+        // using std::optional<E>::operator>=;
+        // using std::optional<E>::operator<=>;
     };
 
-    class Vertex : public std::vector<Edge>
+    class Vertex : public std::vector<Edge>, public std::optional<V>
     {
-        V data_;
 
     public:
         Vertex();
         Vertex(V);
 
-        const V get_data();
-        void set_data(const V &);
+        using std::optional<V>::operator bool;
+        using std::optional<V>::has_value;
+        using std::optional<V>::value;
+        using std::optional<V>::value_or;
+        using std::optional<V>::reset;
+
+        using std::vector<Edge>::operator[];
+        using std::vector<Edge>::push_back;
+        using std::vector<Edge>::begin;
+        using std::vector<Edge>::end;
     };
 
     std::vector<Vertex> graph_;
@@ -38,14 +50,18 @@ public:
     Graph(int = 0);
     ~Graph();
 
-    void edge_dir(int, int, E = E());
-    void edge_bidir(int, int, E = E());
+    void edge_dir(int, int);
+    void edge_dir(int, int, E);
+
+    void edge_bidir(int, int);
+    void edge_bidir(int, int, E);
 
     E get_edge_data(int, int);
     V get_vertex_data(int);
 
     std::string to_string();
-    friend std::ofstream &operator<<(std::ofstream &, Graph<V, E>);
+
+    // friend std::ofstream &operator<<(std::ofstream &, Graph<V, E>);
 };
 #include "Graph.cpp"
 #endif
