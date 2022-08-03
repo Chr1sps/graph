@@ -4,30 +4,42 @@
 #ifdef USE_LIBCPP
 #include <format>
 #endif
+#include <sstream>
 #include <string>
 #include <type_traits>
 
+namespace
+{
+    template <typename T>
+    std::string to_str_helper_(T data)
+    {
+        std::ostringstream sstr;
+        sstr << data;
+        return sstr.str();
+    }
+}
+
 // Graph::Vertex methods
-template <typename V, typename E>
-inline Graph<V, E>::Vertex::Vertex()
+template <typename V, typename E, typename Id>
+inline Graph<V, E, Id>::Vertex::Vertex()
 {
 }
-template <typename V, typename E>
-inline Graph<V, E>::Vertex::Vertex(V data) : std::optional<V>(data)
+template <typename V, typename E, typename Id>
+inline Graph<V, E, Id>::Vertex::Vertex(V data) : std::optional<V>(data)
 {
 }
 
 // Graph methods
-template <typename V, typename E>
-inline Graph<V, E>::Graph() : graph_(std::map<int, Vertex>())
+template <typename V, typename E, typename Id>
+inline Graph<V, E, Id>::Graph() : graph_(std::map<Id, Vertex>())
 {
 }
-template <typename V, typename E>
-inline Graph<V, E>::~Graph()
+template <typename V, typename E, typename Id>
+inline Graph<V, E, Id>::~Graph()
 {
 }
-template <typename V, typename E>
-inline void Graph<V, E>::edge_dir(int start, int end, std::optional<E> data)
+template <typename V, typename E, typename Id>
+inline void Graph<V, E, Id>::edge_dir(Id start, Id end, std::optional<E> data)
 {
     graph_[start][end] = data;
     try
@@ -39,14 +51,14 @@ inline void Graph<V, E>::edge_dir(int start, int end, std::optional<E> data)
         graph_[end] = Vertex();
     }
 }
-template <typename V, typename E>
-inline void Graph<V, E>::edge_bidir(int start, int end, std::optional<E> data)
+template <typename V, typename E, typename Id>
+inline void Graph<V, E, Id>::edge_bidir(Id start, Id end, std::optional<E> data)
 {
     graph_[start][end] = data;
     graph_[end][start] = data;
 }
-template <typename V, typename E>
-inline std::string Graph<V, E>::to_string()
+template <typename V, typename E, typename Id>
+inline std::string Graph<V, E, Id>::to_string()
 {
     std::string result = "";
     for (const auto &v : graph_)
@@ -67,16 +79,16 @@ inline std::string Graph<V, E>::to_string()
 
 #else
         {
-            result += "(" + std::to_string(v.first) + ":" + std::to_string(v.second.value()) + "):";
+            result += "(" + to_str_helper_(v.first) + ":" + to_str_helper_(v.second.value()) + "):";
         }
         else
-            result += std::to_string(v.first) + ":";
+            result += to_str_helper_(v.first) + ":";
         for (const auto &[ekey, evalue] : v.second)
         {
             if (evalue.has_value())
-                result += " (" + std::to_string(ekey) + ": " + std::to_string(evalue.value()) + ")";
+                result += " (" + to_str_helper_(ekey) + ": " + to_str_helper_(evalue.value()) + ")";
             else
-                result += " " + std::to_string(ekey);
+                result += " " + to_str_helper_(ekey);
 #endif
         }
         result += '\n';
