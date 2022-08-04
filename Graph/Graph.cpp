@@ -1,6 +1,7 @@
 #ifndef __GRAPH_CPP_CHRISPS__
 #define __GRAPH_CPP_CHRISPS__
 #include "Graph.hpp"
+#include "graph_exceptions.hpp"
 #ifdef USE_LIBCPP
 #include <format>
 #endif
@@ -21,11 +22,7 @@ namespace
 
 // Graph::Vertex methods
 template <typename V, typename E, typename Id>
-inline Graph<V, E, Id>::Vertex::Vertex()
-{
-}
-template <typename V, typename E, typename Id>
-inline Graph<V, E, Id>::Vertex::Vertex(V data) : std::optional<V>(data)
+inline Graph<V, E, Id>::Vertex::Vertex(Vopt data) : Vopt(data)
 {
 }
 
@@ -34,12 +31,33 @@ template <typename V, typename E, typename Id>
 inline Graph<V, E, Id>::Graph() : graph_(std::map<Id, Vertex>())
 {
 }
+
 template <typename V, typename E, typename Id>
 inline Graph<V, E, Id>::~Graph()
 {
 }
+
 template <typename V, typename E, typename Id>
-inline void Graph<V, E, Id>::edge_dir(Id start, Id end, std::optional<E> data)
+inline void Graph<V, E, Id>::add_vertex(Id id, Vopt value)
+{
+    graph_[id] = Vertex(value);
+}
+
+template <typename V, typename E, typename Id>
+inline void Graph<V, E, Id>::update_vertex(Id id, Vopt value)
+{
+    try
+    {
+        graph_.at(id) = Vertex(value);
+    }
+    catch (const std::out_of_range &e)
+    {
+        throw VertexNotFoundException("Vertex was not found.");
+    }
+}
+
+template <typename V, typename E, typename Id>
+inline void Graph<V, E, Id>::edge_dir(Id start, Id end, Eopt data)
 {
     graph_[start][end] = data;
     try
@@ -51,12 +69,14 @@ inline void Graph<V, E, Id>::edge_dir(Id start, Id end, std::optional<E> data)
         graph_[end] = Vertex();
     }
 }
+
 template <typename V, typename E, typename Id>
-inline void Graph<V, E, Id>::edge_bidir(Id start, Id end, std::optional<E> data)
+inline void Graph<V, E, Id>::edge_bidir(Id start, Id end, Eopt data)
 {
     graph_[start][end] = data;
     graph_[end][start] = data;
 }
+
 template <typename V, typename E, typename Id>
 inline std::string Graph<V, E, Id>::to_string()
 {
