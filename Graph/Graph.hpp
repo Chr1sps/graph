@@ -27,6 +27,10 @@ class Graph
         using std::map<Id, Eopt>::insert;
         using std::map<Id, Eopt>::begin;
         using std::map<Id, Eopt>::end;
+        using std::map<Id, Eopt>::erase;
+        using std::map<Id, Eopt>::find;
+        using std::map<Id, Eopt>::at;
+        using std::map<Id, Eopt>::empty;
     };
 
     std::map<Id, Vertex> graph_;
@@ -48,13 +52,13 @@ public:
     void remove_dir(Id, Id);
     void remove_bidir(Id, Id);
 
-    bool is_edge_dir(Id, Id);
-    bool is_edge_bidir(Id, Id);
+    bool is_edge_dir(Id, Id) const;
+    bool is_edge_bidir(Id, Id) const;
 
-    E get_edge_data(Id, Id);
-    V get_vertex_data(Id);
+    E get_edge_data(Id, Id) const;
+    V get_vertex_data(Id) const;
 
-    std::string to_string();
+    std::string to_string() const;
     // friend std::ofstream &operator<<(std::ofstream &, Graph<V, E>);
 };
 

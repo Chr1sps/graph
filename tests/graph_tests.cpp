@@ -3,10 +3,17 @@
 using namespace std;
 TEST_CASE("Graph initialization.", "[INIT]")
 {
-    Graph<int, int>();
-    Graph<string, string>();
-    Graph<string, string, string>();
-    Graph<int, int, char>();
+    SECTION("Normal types")
+    {
+        Graph<int, int>();
+        Graph<string, string>();
+        Graph<string, string, string>();
+        Graph<int, int, char>();
+    }
+    SECTION("Unusual types")
+    {
+        Graph<nullptr_t, nullptr_t, nullptr_t>();
+    }
 }
 TEST_CASE("Adding and removing edges", "[EDGE]")
 {
@@ -56,5 +63,13 @@ zero: (two: two)\n";
 three: one\n\
 two:\n\
 zero: two\n");
+    }
+    SECTION("Vertex removal")
+    {
+        graph.edge_dir(0, 2, 2);
+        graph.edge_bidir(3, 1, 3);
+        graph.remove_vertex(1);
+        REQUIRE(graph.to_string() ==
+                "0: (2: 2)\n2:\n3:\n");
     }
 }

@@ -37,6 +37,7 @@ inline Graph<V, E, Id>::~Graph()
 {
 }
 
+// vertex add, update and remove
 template <typename V, typename E, typename Id>
 inline void Graph<V, E, Id>::add_vertex(Id id, Vopt value)
 {
@@ -56,6 +57,17 @@ inline void Graph<V, E, Id>::update_vertex(Id id, Vopt value)
     }
 }
 
+template <typename V, typename E, typename Id>
+inline void Graph<V, E, Id>::remove_vertex(Id id)
+{
+    for (auto &v : graph_)
+    {
+        v.second.erase(id);
+    }
+    graph_.erase(id);
+}
+
+// edge add, update and remove
 template <typename V, typename E, typename Id>
 inline void Graph<V, E, Id>::edge_dir(Id start, Id end, Eopt data)
 {
@@ -78,7 +90,49 @@ inline void Graph<V, E, Id>::edge_bidir(Id start, Id end, Eopt data)
 }
 
 template <typename V, typename E, typename Id>
-inline std::string Graph<V, E, Id>::to_string()
+inline void Graph<V, E, Id>::update_dir(Id start, Id end, Eopt data)
+{
+    try
+    {
+        graph_.at(start).second.at(end) = data;
+        graph_.at(end);
+    }
+    catch (const std::out_of_range &e)
+    {
+        throw EdgeNotFoundException("Edge was not found.");
+    }
+}
+
+template <typename V, typename E, typename Id>
+inline void Graph<V, E, Id>::update_bidir(Id start, Id end, Eopt data)
+{
+    try
+    {
+        graph_.at(start).second.at(end) = data;
+        graph_.at(end).second.at(start) = data;
+    }
+    catch (const std::out_of_range &e)
+    {
+        throw EdgeNotFoundException("Edge was not found.");
+    }
+}
+
+template <typename V, typename E, typename Id>
+inline void Graph<V, E, Id>::remove_dir(Id start, Id end)
+{
+    graph_[start].erase(end);
+}
+
+template <typename V, typename E, typename Id>
+inline void Graph<V, E, Id>::remove_bidir(Id start, Id end)
+{
+    remove_dir(start, end);
+    remove_dir(end, start);
+}
+
+// graph printing method
+template <typename V, typename E, typename Id>
+inline std::string Graph<V, E, Id>::to_string() const
 {
     std::string result = "";
     for (const auto &v : graph_)
