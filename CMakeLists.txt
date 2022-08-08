@@ -14,10 +14,16 @@ set(
 )
 
 option(USE_LIBCPP "Use clang libc++ instead of gnu libstdc++" FALSE)
+option(USE_EXPERIMENTAL "Use experimental clang libc++ features" FALSE)
 
 if(USE_LIBCPP)
     message("Using clang libc++.")
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++ -DLIBCXX_ENABLE_INCOMPLETE_FEATURES=ON")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
+
+    if(USE_EXPERIMENTAL)
+        message("Using experimental features.")
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -DLIBCXX_ENABLE_INCOMPLETE_FEATURES=ON")
+    endif()
 else()
     message("Using gnu libstdc++.")
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libstdc++")

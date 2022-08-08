@@ -11,12 +11,65 @@
 
 namespace
 {
-    template <typename T>
-    std::string to_str_helper_(T data)
+    namespace
     {
-        std::ostringstream sstr;
-        sstr << data;
-        return sstr.str();
+        // std::string format_(std::string fmt)
+        // {
+        //     return fmt;
+        // }
+        template <typename T>
+        std::string format_(std::string fmt, T &&arg)
+        {
+            std::ostringstream sstr;
+            bool bracket = false;
+            for (auto it = fmt.begin(); it != fmt.end(); ++it)
+            {
+                switch (*it)
+                {
+                case '{':
+                    break;
+                case '}':
+                    sstr << arg << std::string(++it, fmt.end());
+                    return sstr.str();
+                default:
+                    if (!bracket)
+                        sstr << (*it);
+                    break;
+                }
+            }
+            return sstr.str();
+        }
+        template <typename T, typename... Args>
+        std::string format_(std::string fmt, T &&arg, Args &&...args)
+        {
+            std::ostringstream sstr;
+            bool bracket = false;
+            for (auto it = fmt.begin(); it != fmt.end(); ++it)
+            {
+                switch (*it)
+                {
+                case '{':
+                    break;
+                case '}':
+                    sstr << arg << format_(std::string(++it, fmt.end()), std::forward<Args>(args)...);
+                    return sstr.str();
+                default:
+                    if (!bracket)
+                        sstr << (*it);
+                    break;
+                }
+            }
+            return sstr.str();
+        }
+    }
+    template <typename... Args>
+    std::string format(std::string fmt, Args &&...args)
+    {
+#ifdef HAS_FORMAT
+        return std::format(fmt, args);
+#else
+        return format_(fmt, std::forward<Args>(args)...);
+#endif
     }
 }
 
@@ -198,32 +251,15 @@ inline std::string Graph<V, E, Id>::to_string() const
     for (const auto &v : graph_)
     {
         if (v.second.has_value())
-
-#ifdef HAS_FORMAT
-
-            result += std::format("({}: {}):", v.first, v.second.value());
+            result += format("({}: {}):", v.first, v.second.value());
         else
-            result += std::format("{}: ", v.first);
-        for (const auto &[ekey, evalue] : v)
-        {
-            if (evalue.has_value)
-                result += std::format(" ({}: {})", ekey, evalue.value());
-            else
-                result += std::format(" {}", ekey);
-
-#else
-        {
-            result += "(" + to_str_helper_(v.first) + ":" + to_str_helper_(v.second.value()) + "):";
-        }
-        else
-            result += to_str_helper_(v.first) + ":";
+            result += format("{}:", v.first);
         for (const auto &[ekey, evalue] : v.second)
         {
             if (evalue.has_value())
-                result += " (" + to_str_helper_(ekey) + ": " + to_str_helper_(evalue.value()) + ")";
+                result += format(" ({}: {})", ekey, evalue.value());
             else
-                result += " " + to_str_helper_(ekey);
-#endif
+                result += format(" {}", ekey);
         }
         result += '\n';
     }
