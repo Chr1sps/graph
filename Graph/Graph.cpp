@@ -2,7 +2,7 @@
 #define __GRAPH_CPP_CHRISPS__
 #include "Graph.hpp"
 #include "graph_exceptions.hpp"
-#ifdef USE_LIBCPP
+#ifdef HAS_FORMAT
 #include <format>
 #endif
 #include <sstream>
@@ -130,6 +130,66 @@ inline void Graph<V, E, Id>::remove_bidir(Id start, Id end)
     remove_dir(end, start);
 }
 
+template <typename V, typename E, typename Id>
+inline bool Graph<V, E, Id>::edge_has_data(Id start, Id end) const
+{
+    try
+    {
+        return graph_.at(start).second.at(end).has_data();
+    }
+    catch (const std::out_of_range &e)
+    {
+        throw EdgeNotFoundException("Edge was not found.");
+    }
+}
+
+template <typename V, typename E, typename Id>
+inline V Graph<V, E, Id>::get_vertex_data(Id id) const
+{
+    try
+    {
+        return graph_.at(id).value();
+    }
+    catch (const std::out_of_range &e)
+    {
+        throw VertexNotFoundException("Vertex was not found.");
+    }
+    catch (const std::bad_optional_access &e)
+    {
+        throw VertexWithoutValueException("Vertex has no value.");
+    }
+}
+
+template <typename V, typename E, typename Id>
+inline E Graph<V, E, Id>::get_edge_data(Id start, Id end) const
+{
+    try
+    {
+        return graph_.at(start).second.at(end).data();
+    }
+    catch (const std::out_of_range &e)
+    {
+        throw EdgeNotFoundException("Edge was not found.");
+    }
+    catch (const std::bad_optional_access &e)
+    {
+        throw EdgeWithoutValueException("Edge has no value.");
+    }
+}
+
+template <typename V, typename E, typename Id>
+inline bool Graph<V, E, Id>::vertex_has_data(Id id) const
+{
+    try
+    {
+        return graph_.at(id).has_value();
+    }
+    catch (const std::out_of_range &e)
+    {
+        throw VertexNotFoundException("Vertex was not found.");
+    }
+}
+
 // graph printing method
 template <typename V, typename E, typename Id>
 inline std::string Graph<V, E, Id>::to_string() const
@@ -139,7 +199,7 @@ inline std::string Graph<V, E, Id>::to_string() const
     {
         if (v.second.has_value())
 
-#if defined(USE_LIBCPP) && __cplusplus >= 202002L
+#ifdef HAS_FORMAT
 
             result += std::format("({}: {}):", v.first, v.second.value());
         else

@@ -55,6 +55,9 @@ public:
     bool is_edge_dir(Id, Id) const;
     bool is_edge_bidir(Id, Id) const;
 
+    bool edge_has_data(Id, Id) const;
+    bool vertex_has_data(Id) const;
+
     E get_edge_data(Id, Id) const;
     V get_vertex_data(Id) const;
 
