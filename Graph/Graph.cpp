@@ -151,14 +151,15 @@ inline void Graph<V, E, Id>::erase_vertex(Id id)
 
 /**
  * @brief Creates a one-directional edge from start to end with a given value.
+ * Additionally creates vertices if needed.
  *
- * @tparam  V  vertex data type
- * @tparam  E  edge data type
- * @tparam  Id  vertex identification type
- * @param  start  edge starting point
- * @param  end  edge ending point
- * @param  data  (optional) value to be associated with the edge
- * (edge will have no value if omitted)
+ * @tparam  V  vertex data type.
+ * @tparam  E  edge data type.
+ * @tparam  Id  vertex identification type.
+ * @param  start  edge starting point.
+ * @param  end  edge ending point.
+ * @param  data  (optional) value to be associated with the edge.
+ * (edge will have no value if omitted).
  */
 template <typename V, typename E, typename Id>
 inline void Graph<V, E, Id>::make_dir(Id start, Id end, Eopt data)
@@ -174,6 +175,20 @@ inline void Graph<V, E, Id>::make_dir(Id start, Id end, Eopt data)
     }
 }
 
+/**
+ * @brief Creates a two-directional edge from start to end with a given value.
+ * Additionally creates vertices if needed. The value is given to both
+ * directions of the edge (going from start to end gives you the same value as
+ * going from end to start).
+ *
+ * @tparam  V  vertex data type.
+ * @tparam  E  edge data type.
+ * @tparam  Id  vertex identification type.
+ * @param  start  edge starting point.
+ * @param  end  edge ending point.
+ * @param  data  (optional) value to be associated with the edge
+ * (edge will have no value if omitted).
+ */
 template <typename V, typename E, typename Id>
 inline void Graph<V, E, Id>::make_bidir(Id start, Id end, Eopt data)
 {
@@ -182,11 +197,39 @@ inline void Graph<V, E, Id>::make_bidir(Id start, Id end, Eopt data)
 }
 
 template <typename V, typename E, typename Id>
+inline void Graph<V, E, Id>::join_dir(Id start, Id end, Eopt data)
+{
+    try
+    {
+        graph_.at(end);
+        graph_.at(start)[end] = data;
+    }
+    catch (const std::out_of_range &e)
+    {
+        throw VertexNotFoundException("Vertex was not found.");
+    }
+}
+
+template <typename V, typename E, typename Id>
+inline void Graph<V, E, Id>::join_bidir(Id start, Id end, Eopt data)
+{
+    try
+    {
+        join_dir(start, end, data);
+        join_dir(end, start, data);
+    }
+    catch (const VertexNotFoundException &e)
+    {
+        throw e;
+    }
+}
+
+template <typename V, typename E, typename Id>
 inline void Graph<V, E, Id>::update_dir(Id start, Id end, Eopt data)
 {
     try
     {
-        graph_.at(start).second.at(end) = data;
+        graph_.at(start).at(end) = data;
         graph_.at(end);
     }
     catch (const std::out_of_range &e)
@@ -200,8 +243,8 @@ inline void Graph<V, E, Id>::update_bidir(Id start, Id end, Eopt data)
 {
     try
     {
-        graph_.at(start).second.at(end) = data;
-        graph_.at(end).second.at(start) = data;
+        graph_.at(start).at(end) = data;
+        graph_.at(end).at(start) = data;
     }
     catch (const std::out_of_range &e)
     {
@@ -227,7 +270,7 @@ inline bool Graph<V, E, Id>::edge_has_data(Id start, Id end) const
 {
     try
     {
-        return graph_.at(start).second.at(end).has_value();
+        return graph_.at(start).at(end).has_value();
     }
     catch (const std::out_of_range &e)
     {
@@ -257,7 +300,7 @@ inline E Graph<V, E, Id>::get_edge_data(Id start, Id end) const
 {
     try
     {
-        return graph_.at(start).second.at(end).value();
+        return graph_.at(start).at(end).value();
     }
     catch (const std::out_of_range &e)
     {

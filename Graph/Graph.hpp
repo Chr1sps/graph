@@ -41,7 +41,7 @@ public:
     Graph();
     Graph(const Graph &);
     Graph(Graph &&);
-    ~Graph();
+    virtual ~Graph();
 
     Graph &operator=(const Graph &);
     Graph &operator=(Graph &&);
