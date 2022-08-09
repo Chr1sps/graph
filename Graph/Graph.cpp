@@ -112,7 +112,7 @@ inline Graph<V, E, Id>::~Graph()
 
 // vertex add, update and remove
 template <typename V, typename E, typename Id>
-inline void Graph<V, E, Id>::add_vertex(Id id, Vopt value)
+inline void Graph<V, E, Id>::make_vertex(Id id, Vopt value)
 {
     graph_[id] = Vertex(value);
 }
@@ -306,7 +306,7 @@ inline bool Graph<V, E, Id>::has_data(Id start, Id end) const
 }
 
 template <typename V, typename E, typename Id>
-inline V Graph<V, E, Id>::get_data(Id id) const
+inline V Graph<V, E, Id>::data(Id id) const
 {
     try
     {
@@ -323,7 +323,7 @@ inline V Graph<V, E, Id>::get_data(Id id) const
 }
 
 template <typename V, typename E, typename Id>
-inline E Graph<V, E, Id>::get_data(Id start, Id end) const
+inline E Graph<V, E, Id>::data(Id start, Id end) const
 {
     try
     {

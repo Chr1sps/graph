@@ -58,9 +58,9 @@ public:
     Graph &operator=(const Graph &); // TODO
     Graph &operator=(Graph &&);      // TODO
 
-    void add_vertex(Id, Vopt = Nil);
-    void update_vertex(Id, Vopt = Nil);
-    void erase_vertex(Id);
+    void make_vertex(Id, Vopt = Nil);   // * TESTED
+    void update_vertex(Id, Vopt = Nil); // * TESTED
+    void erase_vertex(Id);              // * TESTED
 
     void make_dir(Id, Id, Eopt = Nil);
     void make_bidir(Id, Id, Eopt = Nil);
@@ -74,15 +74,15 @@ public:
     void erase_dir(Id, Id);
     void erase_bidir(Id, Id);
 
-    bool is_vertex(Id) const;
+    bool is_vertex(Id) const; // * TESTED
     bool is_dir(Id, Id) const;
     bool is_bidir(Id, Id) const;
 
     bool has_data(Id, Id) const;
-    bool has_data(Id) const;
+    bool has_data(Id) const; // * TESTED
 
-    E get_data(Id, Id) const;
-    V get_data(Id) const;
+    E data(Id, Id) const;
+    V data(Id) const; // * TESTED
 
     std::string to_string() const;
     // friend std::ofstream &operator<<(std::ofstream &, Graph<V, E>);
