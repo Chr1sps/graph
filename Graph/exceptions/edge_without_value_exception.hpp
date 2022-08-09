@@ -8,4 +8,5 @@ public:
     EdgeWithoutValueException() = default;
     EdgeWithoutValueException(const char *);
     EdgeWithoutValueException(const EdgeWithoutValueException &) noexcept;
+    const char *what() const noexcept;
 };

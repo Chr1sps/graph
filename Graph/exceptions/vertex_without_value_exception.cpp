@@ -5,7 +5,13 @@ VertexWithoutValueException::VertexWithoutValueException(const char *what_arg)
 {
 }
 
-VertexWithoutValueException::VertexWithoutValueException(const VertexWithoutValueException &other)
+VertexWithoutValueException::VertexWithoutValueException(
+    const VertexWithoutValueException &other) noexcept
     : what_str_(other.what_str_)
 {
+}
+
+const char *VertexWithoutValueException::what() const noexcept
+{
+    return what_str_;
 }

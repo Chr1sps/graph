@@ -1,6 +1,7 @@
 #include "Graph.hpp"
 #include <catch2/catch_all.hpp>
 using namespace std;
+
 TEST_CASE("Graph initialization.", "[INIT]")
 {
     SECTION("Normal types")
@@ -14,7 +15,16 @@ TEST_CASE("Graph initialization.", "[INIT]")
     {
         Graph<nullptr_t, nullptr_t, nullptr_t>();
     }
+    SECTION("Method return values")
+    {
+        Graph<int, int> graph_int = Graph<int, int>();
+        REQUIRE_FALSE(graph_int);
+        REQUIRE_FALSE(graph_int.is_vertex(1));
+        REQUIRE_FALSE(graph_int.is_vertex(3));
+        REQUIRE(graph_int.to_string() == "");
+    }
 }
+
 TEST_CASE("Adding, updating and removing vertices", "[VERTEX]")
 {
     Graph<int, int> graph_int = Graph<int, int>();
@@ -26,11 +36,23 @@ TEST_CASE("Adding, updating and removing vertices", "[VERTEX]")
         graph_int.add_vertex(1, 3);
         result_str = "(1: 3):\n2:\n";
         REQUIRE(graph_int.to_string() == result_str);
+        REQUIRE(graph_int.is_vertex(1));
+        REQUIRE(graph_int.is_vertex(2));
+        REQUIRE(graph_int.vertex_has_data(1));
+        REQUIRE_FALSE(graph_int.vertex_has_data(2));
+        REQUIRE(graph_int.get_vertex_data(1) == 3);
+        REQUIRE(graph_int);
 
         graph_str.add_vertex("three", "two");
         graph_str.add_vertex("one");
         result_str = "one:\n(three: two):\n";
         REQUIRE(graph_str.to_string() == result_str);
+        REQUIRE(graph_str.is_vertex("one"));
+        REQUIRE(graph_str.is_vertex("three"));
+        REQUIRE(graph_str.vertex_has_data("three"));
+        REQUIRE_FALSE(graph_str.vertex_has_data("one"));
+        REQUIRE(graph_str.get_vertex_data("three") == "two");
+        REQUIRE(graph_str);
     }
     SECTION("Updating vertices - valid")
     {
@@ -38,12 +60,15 @@ TEST_CASE("Adding, updating and removing vertices", "[VERTEX]")
         graph_int.add_vertex(1, 3);
         graph_int.update_vertex(2, 4);
         result_str = "(1: 3):\n(2: 4):\n";
+        REQUIRE(graph_int.vertex_has_data(2));
+        REQUIRE(graph_int.get_vertex_data(2) == 4);
         REQUIRE(graph_int.to_string() == result_str);
 
         graph_str.add_vertex("three", "two");
         graph_str.add_vertex("one");
         graph_str.update_vertex("three");
         result_str = "one:\nthree:\n";
+        REQUIRE_FALSE(graph_str.vertex_has_data("three"));
         REQUIRE(graph_str.to_string() == result_str);
     }
     SECTION("Updating vertices - exception")
@@ -68,6 +93,7 @@ TEST_CASE("Adding, updating and removing vertices", "[VERTEX]")
         catch (const VertexNotFoundException &e)
         {
             REQUIRE(graph_int.to_string() == result_str);
+            REQUIRE_FALSE(graph_int.is_vertex(3));
         }
 
         graph_str.add_vertex("three", "two");
@@ -80,6 +106,7 @@ TEST_CASE("Adding, updating and removing vertices", "[VERTEX]")
         catch (const std::exception &e)
         {
             REQUIRE(graph_str.to_string() == result_str);
+            REQUIRE_FALSE(graph_str.is_vertex("seven"));
         }
     }
 }

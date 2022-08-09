@@ -1,9 +1,11 @@
 add_library(
     Graph
     Graph.cpp
+    exceptions/edge_without_value_exception.cpp
+    exceptions/vertex_without_value_exception.cpp
 )
 target_include_directories(Graph PUBLIC exceptions)
-
+target_link_directories(Graph PUBLIC exceptions)
 include(CheckCXXSourceCompiles)
 
 check_cxx_source_compiles("

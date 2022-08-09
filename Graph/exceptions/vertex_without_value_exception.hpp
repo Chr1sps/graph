@@ -8,4 +8,5 @@ public:
     VertexWithoutValueException() = default;
     VertexWithoutValueException(const char *);
     VertexWithoutValueException(const VertexWithoutValueException &) noexcept;
+    const char *what() const noexcept;
 };

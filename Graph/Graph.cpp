@@ -73,6 +73,13 @@ namespace
     }
 }
 
+template <typename V, typename E, typename Id>
+inline bool Graph<V, E, Id>::is_edge_equal_(Id start, Id end,
+                                            Id other_start, Id other_end) const
+{
+    return graph_.at(start).at(end) == graph_.at(other_start).at(other_end);
+}
+
 // Graph::Vertex methods
 template <typename V, typename E, typename Id>
 inline Graph<V, E, Id>::Vertex::Vertex(Vopt data) : Vopt(data)
@@ -104,15 +111,6 @@ template <typename V, typename E, typename Id>
 inline Graph<V, E, Id>::Graph() : graph_(std::map<Id, Vertex>())
 {
 }
-
-// template <typename V, typename E, typename Id>
-// inline Graph<V, E, Id>::Graph(const Graph& other) : graph_(std::map<Id, Vertex>())
-// {
-//     for (Vertex v : other.graph_)
-//     {
-
-//     }
-// }
 
 template <typename V, typename E, typename Id>
 inline Graph<V, E, Id>::~Graph()
@@ -263,6 +261,42 @@ inline void Graph<V, E, Id>::erase_bidir(Id start, Id end)
 {
     erase_dir(start, end);
     erase_dir(end, start);
+}
+
+template <typename V, typename E, typename Id>
+inline bool Graph<V, E, Id>::is_vertex(Id id) const
+{
+    return graph_.contains(id);
+}
+
+template <typename V, typename E, typename Id>
+inline bool Graph<V, E, Id>::is_dir(Id start, Id end) const
+{
+    try
+    {
+        return graph_.at(start).contains(end);
+    }
+    catch (const std::exception &e)
+    {
+        throw VertexNotFoundException("Vertex was not found.");
+    }
+}
+
+template <typename V, typename E, typename Id>
+inline bool Graph<V, E, Id>::is_bidir(Id start, Id end) const
+{
+    try
+    {
+        if (!is_dir(start, end))
+            return false;
+        if (!is_dir(end, start))
+            return false;
+        return is_edge_equal_(start, end, end, start);
+    }
+    catch (const VertexNotFoundException &e)
+    {
+        throw e;
+    }
 }
 
 template <typename V, typename E, typename Id>

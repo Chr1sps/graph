@@ -5,7 +5,12 @@ EdgeWithoutValueException::EdgeWithoutValueException(const char *what_arg)
 {
 }
 
-EdgeWithoutValueException::EdgeWithoutValueException(const EdgeWithoutValueException &other)
+EdgeWithoutValueException::EdgeWithoutValueException(
+    const EdgeWithoutValueException &other) noexcept
     : what_str_(other.what_str_)
 {
+}
+const char *EdgeWithoutValueException::what() const noexcept
+{
+    return what_str_;
 }

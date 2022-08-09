@@ -31,20 +31,22 @@ class Graph
         using std::map<Id, Eopt>::find;
         using std::map<Id, Eopt>::at;
         using std::map<Id, Eopt>::empty;
+        using std::map<Id, Eopt>::contains;
 
         bool operator==(const Vertex &) const;
     };
 
     std::map<Id, Vertex> graph_;
+    bool is_edge_equal_(Id, Id, Id, Id) const;
 
 public:
     Graph();
-    Graph(const Graph &);
-    Graph(Graph &&);
+    Graph(const Graph &); // TODO
+    Graph(Graph &&);      // TODO
     virtual ~Graph();
 
-    Graph &operator=(const Graph &);
-    Graph &operator=(Graph &&);
+    Graph &operator=(const Graph &); // TODO
+    Graph &operator=(Graph &&);      // TODO
 
     void add_vertex(Id, Vopt = Nil);
     void update_vertex(Id, Vopt = Nil);
@@ -62,7 +64,7 @@ public:
     void erase_dir(Id, Id);
     void erase_bidir(Id, Id);
 
-    bool is_vertex(Id);
+    bool is_vertex(Id) const;
     bool is_dir(Id, Id) const;
     bool is_bidir(Id, Id) const;
 
