@@ -31,29 +31,40 @@ class Graph
         using std::map<Id, Eopt>::find;
         using std::map<Id, Eopt>::at;
         using std::map<Id, Eopt>::empty;
+
+        bool operator==(const Vertex &) const;
     };
 
     std::map<Id, Vertex> graph_;
 
 public:
     Graph();
+    Graph(const Graph &);
+    Graph(Graph &&);
     ~Graph();
+
+    Graph &operator=(const Graph &);
+    Graph &operator=(Graph &&);
 
     void add_vertex(Id, Vopt = Nil);
     void update_vertex(Id, Vopt = Nil);
-    void remove_vertex(Id);
+    void erase_vertex(Id);
 
-    void edge_dir(Id, Id, Eopt = Nil);
-    void edge_bidir(Id, Id, Eopt = Nil);
+    void make_dir(Id, Id, Eopt = Nil);
+    void make_bidir(Id, Id, Eopt = Nil);
+
+    void join_dir(Id, Id, Eopt = Nil);
+    void join_bidir(Id, Id, Eopt = Nil);
 
     void update_dir(Id, Id, Eopt = Nil);
     void update_bidir(Id, Id, Eopt = Nil);
 
-    void remove_dir(Id, Id);
-    void remove_bidir(Id, Id);
+    void erase_dir(Id, Id);
+    void erase_bidir(Id, Id);
 
-    bool is_edge_dir(Id, Id) const;
-    bool is_edge_bidir(Id, Id) const;
+    bool is_vertex(Id);
+    bool is_dir(Id, Id) const;
+    bool is_bidir(Id, Id) const;
 
     bool edge_has_data(Id, Id) const;
     bool vertex_has_data(Id) const;
@@ -63,6 +74,10 @@ public:
 
     std::string to_string() const;
     // friend std::ofstream &operator<<(std::ofstream &, Graph<V, E>);
+
+    explicit operator bool() const;
+
+    bool operator==(const Graph &) const;
 };
 
 #include "Graph.cpp"

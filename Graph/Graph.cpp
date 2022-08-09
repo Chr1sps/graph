@@ -79,11 +79,40 @@ inline Graph<V, E, Id>::Vertex::Vertex(Vopt data) : Vopt(data)
 {
 }
 
+template <typename V, typename E, typename Id>
+inline bool Graph<V, E, Id>::Vertex::operator==(const Vertex &other) const
+{
+    if (dynamic_cast<Vopt>(*this) != dynamic_cast<Vopt>(other))
+        return false;
+    for (auto [k, v] : *this)
+    {
+        try
+        {
+            if (v != other.at(k))
+                return false;
+        }
+        catch (const std::out_of_range &e)
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
 // Graph methods
 template <typename V, typename E, typename Id>
 inline Graph<V, E, Id>::Graph() : graph_(std::map<Id, Vertex>())
 {
 }
+
+// template <typename V, typename E, typename Id>
+// inline Graph<V, E, Id>::Graph(const Graph& other) : graph_(std::map<Id, Vertex>())
+// {
+//     for (Vertex v : other.graph_)
+//     {
+
+//     }
+// }
 
 template <typename V, typename E, typename Id>
 inline Graph<V, E, Id>::~Graph()
@@ -111,7 +140,7 @@ inline void Graph<V, E, Id>::update_vertex(Id id, Vopt value)
 }
 
 template <typename V, typename E, typename Id>
-inline void Graph<V, E, Id>::remove_vertex(Id id)
+inline void Graph<V, E, Id>::erase_vertex(Id id)
 {
     for (auto &v : graph_)
     {
@@ -120,9 +149,19 @@ inline void Graph<V, E, Id>::remove_vertex(Id id)
     graph_.erase(id);
 }
 
-// edge add, update and remove
+/**
+ * @brief Creates a one-directional edge from start to end with a given value.
+ *
+ * @tparam  V  vertex data type
+ * @tparam  E  edge data type
+ * @tparam  Id  vertex identification type
+ * @param  start  edge starting point
+ * @param  end  edge ending point
+ * @param  data  (optional) value to be associated with the edge
+ * (edge will have no value if omitted)
+ */
 template <typename V, typename E, typename Id>
-inline void Graph<V, E, Id>::edge_dir(Id start, Id end, Eopt data)
+inline void Graph<V, E, Id>::make_dir(Id start, Id end, Eopt data)
 {
     graph_[start][end] = data;
     try
@@ -136,7 +175,7 @@ inline void Graph<V, E, Id>::edge_dir(Id start, Id end, Eopt data)
 }
 
 template <typename V, typename E, typename Id>
-inline void Graph<V, E, Id>::edge_bidir(Id start, Id end, Eopt data)
+inline void Graph<V, E, Id>::make_bidir(Id start, Id end, Eopt data)
 {
     graph_[start][end] = data;
     graph_[end][start] = data;
@@ -171,16 +210,16 @@ inline void Graph<V, E, Id>::update_bidir(Id start, Id end, Eopt data)
 }
 
 template <typename V, typename E, typename Id>
-inline void Graph<V, E, Id>::remove_dir(Id start, Id end)
+inline void Graph<V, E, Id>::erase_dir(Id start, Id end)
 {
     graph_[start].erase(end);
 }
 
 template <typename V, typename E, typename Id>
-inline void Graph<V, E, Id>::remove_bidir(Id start, Id end)
+inline void Graph<V, E, Id>::erase_bidir(Id start, Id end)
 {
-    remove_dir(start, end);
-    remove_dir(end, start);
+    erase_dir(start, end);
+    erase_dir(end, start);
 }
 
 template <typename V, typename E, typename Id>
@@ -188,7 +227,7 @@ inline bool Graph<V, E, Id>::edge_has_data(Id start, Id end) const
 {
     try
     {
-        return graph_.at(start).second.at(end).has_data();
+        return graph_.at(start).second.at(end).has_value();
     }
     catch (const std::out_of_range &e)
     {
@@ -218,7 +257,7 @@ inline E Graph<V, E, Id>::get_edge_data(Id start, Id end) const
 {
     try
     {
-        return graph_.at(start).second.at(end).data();
+        return graph_.at(start).second.at(end).value();
     }
     catch (const std::out_of_range &e)
     {
@@ -264,5 +303,17 @@ inline std::string Graph<V, E, Id>::to_string() const
         result += '\n';
     }
     return result;
+}
+
+template <typename V, typename E, typename Id>
+inline Graph<V, E, Id>::operator bool() const
+{
+    return !graph_.empty();
+}
+
+template <typename V, typename E, typename Id>
+inline bool Graph<V, E, Id>::operator==(const Graph &other) const
+{
+    return this->graph_ == other.graph_;
 }
 #endif

@@ -21,12 +21,12 @@ TEST_CASE("Adding and removing edges", "[EDGE]")
     Graph<string, string, string> graph_str = Graph<string, string, string>();
     SECTION("No data")
     {
-        graph.edge_dir(0, 2);
-        graph.edge_bidir(3, 1);
+        graph.make_dir(0, 2);
+        graph.make_bidir(3, 1);
         REQUIRE(graph.to_string() == "0: 2\n1: 3\n2:\n3: 1\n");
 
-        graph_str.edge_dir("zero", "two");
-        graph_str.edge_bidir("three", "one");
+        graph_str.make_dir("zero", "two");
+        graph_str.make_bidir("three", "one");
         REQUIRE(graph_str.to_string() == "one: three\n\
 three: one\n\
 two:\n\
@@ -34,13 +34,13 @@ zero: two\n");
     }
     SECTION("Edge and vertex data - int")
     {
-        graph.edge_dir(0, 2, 2);
-        graph.edge_bidir(3, 1, 3);
+        graph.make_dir(0, 2, 2);
+        graph.make_bidir(3, 1, 3);
         REQUIRE(graph.to_string() ==
                 "0: (2: 2)\n1: (3: 3)\n2:\n3: (1: 3)\n");
 
-        graph_str.edge_dir("zero", "two", "two");
-        graph_str.edge_bidir("three", "one", "three");
+        graph_str.make_dir("zero", "two", "two");
+        graph_str.make_bidir("three", "one", "three");
         string result_str = "one: (three: three)\n\
 three: (one: three)\n\
 two:\n\
@@ -49,16 +49,16 @@ zero: (two: two)\n";
     }
     SECTION("Adding the same edge twice")
     {
-        graph.edge_dir(0, 2);
-        graph.edge_dir(0, 2);
-        graph.edge_bidir(3, 1);
-        graph.edge_bidir(3, 1);
+        graph.make_dir(0, 2);
+        graph.make_dir(0, 2);
+        graph.make_bidir(3, 1);
+        graph.make_bidir(3, 1);
         REQUIRE(graph.to_string() == "0: 2\n1: 3\n2:\n3: 1\n");
 
-        graph_str.edge_dir("zero", "two");
-        graph_str.edge_dir("zero", "two");
-        graph_str.edge_bidir("three", "one");
-        graph_str.edge_bidir("three", "one");
+        graph_str.make_dir("zero", "two");
+        graph_str.make_dir("zero", "two");
+        graph_str.make_bidir("three", "one");
+        graph_str.make_bidir("three", "one");
         REQUIRE(graph_str.to_string() == "one: three\n\
 three: one\n\
 two:\n\
@@ -66,9 +66,9 @@ zero: two\n");
     }
     SECTION("Vertex removal")
     {
-        graph.edge_dir(0, 2, 2);
-        graph.edge_bidir(3, 1, 3);
-        graph.remove_vertex(1);
+        graph.make_dir(0, 2, 2);
+        graph.make_bidir(3, 1, 3);
+        graph.erase_vertex(1);
         REQUIRE(graph.to_string() ==
                 "0: (2: 2)\n2:\n3:\n");
     }
