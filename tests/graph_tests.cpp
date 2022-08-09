@@ -38,9 +38,9 @@ TEST_CASE("Adding, updating and removing vertices", "[VERTEX]")
         REQUIRE(graph_int.to_string() == result_str);
         REQUIRE(graph_int.is_vertex(1));
         REQUIRE(graph_int.is_vertex(2));
-        REQUIRE(graph_int.vertex_has_data(1));
-        REQUIRE_FALSE(graph_int.vertex_has_data(2));
-        REQUIRE(graph_int.get_vertex_data(1) == 3);
+        REQUIRE(graph_int.has_data(1));
+        REQUIRE_FALSE(graph_int.has_data(2));
+        REQUIRE(graph_int.get_data(1) == 3);
         REQUIRE(graph_int);
 
         graph_str.add_vertex("three", "two");
@@ -49,9 +49,9 @@ TEST_CASE("Adding, updating and removing vertices", "[VERTEX]")
         REQUIRE(graph_str.to_string() == result_str);
         REQUIRE(graph_str.is_vertex("one"));
         REQUIRE(graph_str.is_vertex("three"));
-        REQUIRE(graph_str.vertex_has_data("three"));
-        REQUIRE_FALSE(graph_str.vertex_has_data("one"));
-        REQUIRE(graph_str.get_vertex_data("three") == "two");
+        REQUIRE(graph_str.has_data("three"));
+        REQUIRE_FALSE(graph_str.has_data("one"));
+        REQUIRE(graph_str.get_data("three") == "two");
         REQUIRE(graph_str);
     }
     SECTION("Updating vertices - valid")
@@ -60,15 +60,15 @@ TEST_CASE("Adding, updating and removing vertices", "[VERTEX]")
         graph_int.add_vertex(1, 3);
         graph_int.update_vertex(2, 4);
         result_str = "(1: 3):\n(2: 4):\n";
-        REQUIRE(graph_int.vertex_has_data(2));
-        REQUIRE(graph_int.get_vertex_data(2) == 4);
+        REQUIRE(graph_int.has_data(2));
+        REQUIRE(graph_int.get_data(2) == 4);
         REQUIRE(graph_int.to_string() == result_str);
 
         graph_str.add_vertex("three", "two");
         graph_str.add_vertex("one");
         graph_str.update_vertex("three");
         result_str = "one:\nthree:\n";
-        REQUIRE_FALSE(graph_str.vertex_has_data("three"));
+        REQUIRE_FALSE(graph_str.has_data("three"));
         REQUIRE(graph_str.to_string() == result_str);
     }
     SECTION("Updating vertices - exception")
@@ -108,6 +108,11 @@ TEST_CASE("Adding, updating and removing vertices", "[VERTEX]")
             REQUIRE(graph_str.to_string() == result_str);
             REQUIRE_FALSE(graph_str.is_vertex("seven"));
         }
+    }
+    SECTION("Erasing vertices")
+    {
+        graph_int.add_vertex(2);
+        graph_int.add_vertex(1, 3);
     }
 }
 TEST_CASE("Adding and removing edges", "[EDGE]")

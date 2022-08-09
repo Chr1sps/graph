@@ -37,7 +37,17 @@ class Graph
     };
 
     std::map<Id, Vertex> graph_;
+
     bool is_edge_equal_(Id, Id, Id, Id) const;
+
+    template <typename U>
+    static std::string fmt_(const std::string &, U &&);
+
+    template <typename U, typename... Args>
+    static std::string fmt_(const std::string &, U &&, Args &&...);
+
+    template <typename... Args>
+    static std::string format_(const std::string &, Args &&...);
 
 public:
     Graph();
@@ -68,11 +78,11 @@ public:
     bool is_dir(Id, Id) const;
     bool is_bidir(Id, Id) const;
 
-    bool edge_has_data(Id, Id) const;
-    bool vertex_has_data(Id) const;
+    bool has_data(Id, Id) const;
+    bool has_data(Id) const;
 
-    E get_edge_data(Id, Id) const;
-    V get_vertex_data(Id) const;
+    E get_data(Id, Id) const;
+    V get_data(Id) const;
 
     std::string to_string() const;
     // friend std::ofstream &operator<<(std::ofstream &, Graph<V, E>);

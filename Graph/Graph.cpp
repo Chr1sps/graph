@@ -9,68 +9,61 @@
 #include <string>
 #include <type_traits>
 
-namespace
+template <typename V, typename E, typename Id>
+template <typename U>
+inline std::string Graph<V, E, Id>::fmt_(const std::string &fmt, U &&arg)
 {
-    namespace
+    std::ostringstream sstr;
+    bool bracket = false;
+    for (auto it = fmt.begin(); it != fmt.end(); ++it)
     {
-        // std::string format_(std::string fmt)
-        // {
-        //     return fmt;
-        // }
-        template <typename T>
-        std::string format_(std::string fmt, T &&arg)
+        switch (*it)
         {
-            std::ostringstream sstr;
-            bool bracket = false;
-            for (auto it = fmt.begin(); it != fmt.end(); ++it)
-            {
-                switch (*it)
-                {
-                case '{':
-                    break;
-                case '}':
-                    sstr << arg << std::string(++it, fmt.end());
-                    return sstr.str();
-                default:
-                    if (!bracket)
-                        sstr << (*it);
-                    break;
-                }
-            }
+        case '{':
+            break;
+        case '}':
+            sstr << arg << std::string(++it, fmt.end());
             return sstr.str();
-        }
-        template <typename T, typename... Args>
-        std::string format_(std::string fmt, T &&arg, Args &&...args)
-        {
-            std::ostringstream sstr;
-            bool bracket = false;
-            for (auto it = fmt.begin(); it != fmt.end(); ++it)
-            {
-                switch (*it)
-                {
-                case '{':
-                    break;
-                case '}':
-                    sstr << arg << format_(std::string(++it, fmt.end()), std::forward<Args>(args)...);
-                    return sstr.str();
-                default:
-                    if (!bracket)
-                        sstr << (*it);
-                    break;
-                }
-            }
-            return sstr.str();
+        default:
+            if (!bracket)
+                sstr << (*it);
+            break;
         }
     }
-    template <typename... Args>
-    std::string format(std::string fmt, Args &&...args)
+    return sstr.str();
+}
+template <typename V, typename E, typename Id>
+template <typename U, typename... Args>
+inline std::string Graph<V, E, Id>::fmt_(const std::string &fmt, U &&arg, Args &&...args)
+{
+    std::ostringstream sstr;
+    bool bracket = false;
+    for (auto it = fmt.begin(); it != fmt.end(); ++it)
     {
+        switch (*it)
+        {
+        case '{':
+            break;
+        case '}':
+            sstr << arg << fmt_(std::string(++it, fmt.end()), std::forward<Args>(args)...);
+            return sstr.str();
+        default:
+            if (!bracket)
+                sstr << (*it);
+            break;
+        }
+    }
+    return sstr.str();
+}
+template <typename V, typename E, typename Id>
+template <typename... Args>
+inline std::string Graph<V, E, Id>::format_(const std::string &fmt, Args &&...args)
+{
 #ifdef HAS_FORMAT
-        return std::format(fmt, args);
+    return std::format(fmt, args);
 #else
-        return format_(fmt, std::forward<Args>(args)...);
+    return fmt_(fmt, std::forward<Args>(args)...);
 #endif
-    }
 }
 
 template <typename V, typename E, typename Id>
@@ -300,7 +293,7 @@ inline bool Graph<V, E, Id>::is_bidir(Id start, Id end) const
 }
 
 template <typename V, typename E, typename Id>
-inline bool Graph<V, E, Id>::edge_has_data(Id start, Id end) const
+inline bool Graph<V, E, Id>::has_data(Id start, Id end) const
 {
     try
     {
@@ -313,7 +306,7 @@ inline bool Graph<V, E, Id>::edge_has_data(Id start, Id end) const
 }
 
 template <typename V, typename E, typename Id>
-inline V Graph<V, E, Id>::get_vertex_data(Id id) const
+inline V Graph<V, E, Id>::get_data(Id id) const
 {
     try
     {
@@ -330,7 +323,7 @@ inline V Graph<V, E, Id>::get_vertex_data(Id id) const
 }
 
 template <typename V, typename E, typename Id>
-inline E Graph<V, E, Id>::get_edge_data(Id start, Id end) const
+inline E Graph<V, E, Id>::get_data(Id start, Id end) const
 {
     try
     {
@@ -347,7 +340,7 @@ inline E Graph<V, E, Id>::get_edge_data(Id start, Id end) const
 }
 
 template <typename V, typename E, typename Id>
-inline bool Graph<V, E, Id>::vertex_has_data(Id id) const
+inline bool Graph<V, E, Id>::has_data(Id id) const
 {
     try
     {
@@ -367,15 +360,15 @@ inline std::string Graph<V, E, Id>::to_string() const
     for (const auto &v : graph_)
     {
         if (v.second.has_value())
-            result += format("({}: {}):", v.first, v.second.value());
+            result += format_("({}: {}):", v.first, v.second.value());
         else
-            result += format("{}:", v.first);
+            result += format_("{}:", v.first);
         for (const auto &[ekey, evalue] : v.second)
         {
             if (evalue.has_value())
-                result += format(" ({}: {})", ekey, evalue.value());
+                result += format_(" ({}: {})", ekey, evalue.value());
             else
-                result += format(" {}", ekey);
+                result += format_(" {}", ekey);
         }
         result += '\n';
     }
