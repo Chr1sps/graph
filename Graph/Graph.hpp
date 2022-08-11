@@ -5,6 +5,7 @@
 #include <memory>
 #include <optional>
 #include <vector>
+#include <concepts>
 template <typename V, typename E, typename Id = int>
 class Graph
 {
@@ -32,6 +33,7 @@ class Graph
         using std::map<Id, Eopt>::at;
         using std::map<Id, Eopt>::empty;
         using std::map<Id, Eopt>::contains;
+        using std::map<Id, Eopt>::size;
 
         bool operator==(const Vertex &) const;
     };
@@ -62,8 +64,8 @@ public:
     void make_dir(Id, Id, Eopt = Nil); // * TESTED
     void make_bidir(Id, Id, Eopt = Nil);
 
-    void join_dir(Id, Id, Eopt = Nil); // * TESTED
-    void join_bidir(Id, Id, Eopt = Nil);
+    void join_dir(Id, Id, Eopt = Nil);   // * TESTED
+    void join_bidir(Id, Id, Eopt = Nil); // * EDGE CASES TESTED
 
     void update_vertex(Id, Vopt = Nil); // * TESTED
     void update_dir(Id, Id, Eopt = Nil);
@@ -87,6 +89,7 @@ public:
     // friend std::ofstream &operator<<(std::ofstream &, Graph<V, E>);
 
     std::size_t size() const;
+    int edge_count() const;
     bool empty() const;
 
     explicit operator bool() const;

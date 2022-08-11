@@ -398,6 +398,17 @@ inline std::size_t Graph<V, E, Id>::size() const
     return graph_.size();
 }
 
+template <typename V, typename E, typename Id>
+inline int Graph<V, E, Id>::edge_count() const
+{
+    int result = 0;
+    for (auto [k, v] : graph_)
+    {
+        result += v.size();
+    }
+    return result;
+}
+
 /**
  * @brief Return true if the graph contains no vertices.
  *
