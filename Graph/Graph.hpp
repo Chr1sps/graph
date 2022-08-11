@@ -1,11 +1,11 @@
 #ifndef __GRAPH_HPP_CHRISPS__
 #define __GRAPH_HPP_CHRISPS__
 #include <cstddef>
+#include <initializer_list>
 #include <map>
 #include <memory>
 #include <optional>
 #include <vector>
-#include <concepts>
 template <typename V, typename E, typename Id = int>
 class Graph
 {
@@ -55,10 +55,12 @@ public:
     Graph();
     Graph(const Graph &); // TODO
     Graph(Graph &&);      // TODO
+    Graph(const std::initializer_list<Id> &);
     virtual ~Graph();
 
-    Graph &operator=(const Graph &); // TODO
-    Graph &operator=(Graph &&);      // TODO
+    void operator=(const Graph &); // TODO
+    void operator=(Graph &&);      // TODO
+    void operator=(const std::initializer_list<Id> &);
 
     void make_vertex(Id, Vopt = Nil);  // * TESTED
     void make_dir(Id, Id, Eopt = Nil); // * TESTED

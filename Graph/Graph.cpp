@@ -5,6 +5,7 @@
 #ifdef HAS_FORMAT
 #include <format>
 #endif
+#include <initializer_list>
 #include <sstream>
 #include <string>
 #include <type_traits>
@@ -82,7 +83,7 @@ inline Graph<V, E, Id>::Vertex::Vertex(Vopt data) : Vopt(data)
 template <typename V, typename E, typename Id>
 inline bool Graph<V, E, Id>::Vertex::operator==(const Vertex &other) const
 {
-    if (dynamic_cast<Vopt>(*this) != dynamic_cast<Vopt>(other))
+    if (dynamic_cast<const Vopt &>(*this) != dynamic_cast<const Vopt &>(other))
         return false;
     for (auto [k, v] : *this)
     {
@@ -103,6 +104,25 @@ inline bool Graph<V, E, Id>::Vertex::operator==(const Vertex &other) const
 template <typename V, typename E, typename Id>
 inline Graph<V, E, Id>::Graph() : graph_(std::map<Id, Vertex>())
 {
+}
+
+template <typename V, typename E, typename Id>
+inline Graph<V, E, Id>::Graph(const std::initializer_list<Id> &list) : graph_(std::map<Id, Vertex>())
+{
+    for (const Id &id : list)
+    {
+        make_vertex(id);
+    }
+}
+
+template <typename V, typename E, typename Id>
+inline void Graph<V, E, Id>::operator=(const std::initializer_list<Id> &list)
+{
+    graph_.clear();
+    for (const Id &id : list)
+    {
+        make_vertex(id);
+    }
 }
 
 template <typename V, typename E, typename Id>

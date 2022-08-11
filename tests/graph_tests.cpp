@@ -1,6 +1,5 @@
 #include "Graph.hpp"
 #include <catch2/catch_all.hpp>
-#include <vector>
 
 /**
  * @brief Used for testing side-effects of methods under exception-throwing
@@ -17,9 +16,6 @@
     }
 
 using namespace std;
-
-vector<int> ids_int = {1, 2, 3, 4};
-vector<std::string> ids_string = {"one", "two", "three", "four"};
 
 TEST_CASE("Graph initialization.", "[INIT]")
 {
@@ -164,17 +160,9 @@ TEST_CASE("Vertex manipulation", "[VERTEX]")
 }
 TEST_CASE("Edge manipulation", "[EDGE]")
 {
-    Graph<int, int> graph_int = Graph<int, int>();
-    Graph<string, string, string> graph_str = Graph<string, string, string>();
+    Graph<int, int> graph_int = {1, 2, 3, 4};
+    Graph<string, string, string> graph_str = {"one", "two", "three", "four"};
     string result_str;
-    for (const int &id : ids_int)
-    {
-        graph_int.make_vertex(id);
-    }
-    for (const std::string &id : ids_string)
-    {
-        graph_str.make_vertex(id);
-    }
     SECTION("make_dir")
     {
         graph_int.make_dir(1, 2);
@@ -429,5 +417,20 @@ two:\n";
         REQUIRE_FALSE(graph_str.is_vertex("seven"));
         REQUIRE_FALSE(graph_str.is_vertex("eight"));
         REQUIRE_FALSE(graph_str.is_vertex("nine"));
+    }
+}
+
+TEST_CASE("Comparing graphs", "[COMP]")
+{
+    Graph<int, int> first, second;
+    SECTION("empty")
+    {
+        REQUIRE(first == second);
+    }
+    SECTION("vertices only")
+    {
+        first = {1, 2, 3, 4};
+        second = {1, 2, 3, 4};
+        REQUIRE(first == second);
     }
 }
