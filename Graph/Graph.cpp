@@ -110,13 +110,6 @@ inline Graph<V, E, Id>::~Graph()
 {
 }
 
-// vertex add, update and remove
-template <typename V, typename E, typename Id>
-inline void Graph<V, E, Id>::make_vertex(Id id, Vopt value)
-{
-    graph_[id] = Vertex(value);
-}
-
 template <typename V, typename E, typename Id>
 inline void Graph<V, E, Id>::update_vertex(Id id, Vopt value)
 {
@@ -138,6 +131,22 @@ inline void Graph<V, E, Id>::erase_vertex(Id id)
         v.second.erase(id);
     }
     graph_.erase(id);
+}
+
+/**
+ * @brief Creates a new vertex of given id and value.
+ *
+ * @tparam  V  vertex data type.
+ * @tparam  E  edge data type.
+ * @tparam  Id  vertex identification type.
+ * @param  id  vertex id.
+ * @param  value  (optional) value to be associated with the vertex
+ * (vertex will have no value if omitted).
+ */
+template <typename V, typename E, typename Id>
+inline void Graph<V, E, Id>::make_vertex(Id id, Vopt value)
+{
+    graph_[id] = Vertex(value);
 }
 
 /**
@@ -293,6 +302,19 @@ inline bool Graph<V, E, Id>::is_bidir(Id start, Id end) const
 }
 
 template <typename V, typename E, typename Id>
+inline bool Graph<V, E, Id>::has_data(Id id) const
+{
+    try
+    {
+        return graph_.at(id).has_value();
+    }
+    catch (const std::out_of_range &e)
+    {
+        throw VertexNotFoundException("Vertex was not found.");
+    }
+}
+
+template <typename V, typename E, typename Id>
 inline bool Graph<V, E, Id>::has_data(Id start, Id end) const
 {
     try
@@ -339,19 +361,6 @@ inline E Graph<V, E, Id>::data(Id start, Id end) const
     }
 }
 
-template <typename V, typename E, typename Id>
-inline bool Graph<V, E, Id>::has_data(Id id) const
-{
-    try
-    {
-        return graph_.at(id).has_value();
-    }
-    catch (const std::out_of_range &e)
-    {
-        throw VertexNotFoundException("Vertex was not found.");
-    }
-}
-
 // graph printing method
 template <typename V, typename E, typename Id>
 inline std::string Graph<V, E, Id>::to_string() const
@@ -375,12 +384,62 @@ inline std::string Graph<V, E, Id>::to_string() const
     return result;
 }
 
+/**
+ * @brief Returns the amount of vertices a graph has.
+ *
+ * @tparam V
+ * @tparam E
+ * @tparam Id
+ * @return std::size_t
+ */
+template <typename V, typename E, typename Id>
+inline std::size_t Graph<V, E, Id>::size() const
+{
+    return graph_.size();
+}
+
+/**
+ * @brief Return true if the graph contains no vertices.
+ *
+ * @tparam V
+ * @tparam E
+ * @tparam Id
+ * @return true
+ * @return false
+ */
+template <typename V, typename E, typename Id>
+inline bool Graph<V, E, Id>::empty() const
+{
+    return graph_.empty();
+}
+
+/**
+ * @brief Returns true if the graph has at least a single vertex.
+ *
+ * @tparam V
+ * @tparam E
+ * @tparam Id
+ * @return true
+ * @return false
+ */
 template <typename V, typename E, typename Id>
 inline Graph<V, E, Id>::operator bool() const
 {
-    return !graph_.empty();
+    return !empty();
 }
 
+/**
+ * @brief Returns true if both graphs are identical. Conditions that must be
+ * met:
+ *
+ *
+ * @tparam V
+ * @tparam E
+ * @tparam Id
+ * @param other
+ * @return true
+ * @return false
+ */
 template <typename V, typename E, typename Id>
 inline bool Graph<V, E, Id>::operator==(const Graph &other) const
 {
