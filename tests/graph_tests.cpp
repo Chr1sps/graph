@@ -420,7 +420,7 @@ two:\n";
     }
 }
 
-TEST_CASE("Comparing graphs", "[COMP]")
+TEST_CASE("Comparing graphs - true", "[COMP][TRUE]")
 {
     Graph<int, int> first, second;
     SECTION("empty")
@@ -433,12 +433,38 @@ TEST_CASE("Comparing graphs", "[COMP]")
         second = {1, 2, 3, 4};
         REQUIRE(first == second);
     }
-    SECTION("copying assignment")
+    SECTION("copying constructor")
     {
         first = {1, 2, 3, 4};
         first.join_dir(1, 3, 4);
         first.join_dir(2, 1);
         Graph<int, int> other(first);
         REQUIRE(first == other);
+    }
+    SECTION("copying assignment")
+    {
+        first = {1, 2, 3, 4};
+        first.join_dir(1, 3, 4);
+        first.join_dir(2, 1);
+        second = first;
+        REQUIRE(first == second);
+    }
+}
+
+TEST_CASE("Comparing graphs - false", "[COMP][FALSE]")
+{
+    Graph<int, int> first, second;
+    SECTION("vertices only")
+    {
+        first = {1, 2, 3};
+        second = {2, 3, 4};
+        REQUIRE(first != second);
+    }
+    SECTION("edges only - no data")
+    {
+        first = second = {1, 2, 3, 4};
+        first.join_dir(2, 3);
+        second.join_dir(3, 2);
+        REQUIRE(first != second);
     }
 }

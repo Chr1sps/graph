@@ -6,6 +6,14 @@
 #include <memory>
 #include <optional>
 #include <vector>
+
+/**
+ * @brief Class representation of a graph.
+ *
+ * @tparam  V  - vertex data type.
+ * @tparam  E  - edge data type.
+ * @tparam  Id  -  vertex identifier data type (int if omitted).
+ */
 template <typename V, typename E, typename Id = int>
 class Graph
 {
@@ -57,13 +65,13 @@ class Graph
 public:
     Graph();
     Graph(const Graph &);
-    Graph(Graph &&); // TODO
+    Graph(Graph &&);
     Graph(const std::initializer_list<Id> &);
     virtual ~Graph();
 
-    void operator=(const Graph &);
-    void operator=(Graph &&); // TODO
-    void operator=(const std::initializer_list<Id> &);
+    Graph &operator=(const Graph &);
+    Graph &operator=(Graph &&);
+    Graph &operator=(const std::initializer_list<Id> &);
 
     void make_vertex(Id, Vopt = Nil);  // * TESTED
     void make_dir(Id, Id, Eopt = Nil); // * TESTED
@@ -100,6 +108,7 @@ public:
     explicit operator bool() const;
 
     bool operator==(const Graph &) const;
+    bool operator!=(const Graph &) const;
 };
 
 #include "Graph.cpp"

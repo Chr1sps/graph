@@ -18,7 +18,7 @@ option(USE_EXPERIMENTAL "Use experimental clang libc++ features" FALSE)
 
 if(USE_LIBCPP)
     message("Using clang libc++.")
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++ -lc++ -L/usr/lib/x86-64-linux-gnu/libc++.so")
 
     if(USE_EXPERIMENTAL)
         message("Using experimental features.")

@@ -35,7 +35,8 @@ inline std::string Graph<V, E, Id>::fmt_(const std::string &fmt, U &&arg)
 }
 template <typename V, typename E, typename Id>
 template <typename U, typename... Args>
-inline std::string Graph<V, E, Id>::fmt_(const std::string &fmt, U &&arg, Args &&...args)
+inline std::string Graph<V, E, Id>::fmt_(
+    const std::string &fmt, U &&arg, Args &&...args)
 {
     std::ostringstream sstr;
     bool bracket = false;
@@ -46,7 +47,8 @@ inline std::string Graph<V, E, Id>::fmt_(const std::string &fmt, U &&arg, Args &
         case '{':
             break;
         case '}':
-            sstr << arg << fmt_(std::string(++it, fmt.end()), std::forward<Args>(args)...);
+            sstr << arg
+                 << fmt_(std::string(++it, fmt.end()), std::forward<Args>(args)...);
             return sstr.str();
         default:
             if (!bracket)
@@ -58,7 +60,8 @@ inline std::string Graph<V, E, Id>::fmt_(const std::string &fmt, U &&arg, Args &
 }
 template <typename V, typename E, typename Id>
 template <typename... Args>
-inline std::string Graph<V, E, Id>::format_(const std::string &fmt, Args &&...args)
+inline std::string Graph<V, E, Id>::format_(
+    const std::string &fmt, Args &&...args)
 {
 #ifdef HAS_FORMAT
     return std::format(fmt, args);
@@ -85,7 +88,7 @@ inline void Graph<V, E, Id>::init_(const Graph &other)
             if (ev.has_value())
                 graph_[k][ek] = ev.value();
             else
-                graph_[k][ek] = std::nullopt;
+                graph_[k][ek] = Nil;
         }
     }
 }
@@ -129,29 +132,45 @@ inline Graph<V, E, Id>::Graph() : graph_(std::map<Id, Vertex>())
 {
 }
 template <typename V, typename E, typename Id>
-inline Graph<V, E, Id>::Graph(const Graph &other) : graph_(std::map<Id, Vertex>())
+inline Graph<V, E, Id>::Graph(const Graph &other)
+    : graph_(std::map<Id, Vertex>())
 {
     init_(other);
 }
-
 template <typename V, typename E, typename Id>
-inline Graph<V, E, Id>::Graph(const std::initializer_list<Id> &list) : graph_(std::map<Id, Vertex>())
+inline Graph<V, E, Id>::Graph(Graph &&other)
+    : graph_(std::move(other.graph_))
+{
+}
+template <typename V, typename E, typename Id>
+inline Graph<V, E, Id>::Graph(const std::initializer_list<Id> &list)
+    : graph_(std::map<Id, Vertex>())
 {
     init_(list);
 }
 
 template <typename V, typename E, typename Id>
-inline void Graph<V, E, Id>::operator=(const Graph &other)
+inline Graph<V, E, Id> &Graph<V, E, Id>::operator=(const Graph &other)
 {
     graph_.clear();
     init_(other);
+    return *this;
 }
 
 template <typename V, typename E, typename Id>
-inline void Graph<V, E, Id>::operator=(const std::initializer_list<Id> &list)
+inline Graph<V, E, Id> &Graph<V, E, Id>::operator=(Graph &&other)
+{
+    graph_ = std::move(other.graph_);
+    return *this;
+}
+
+template <typename V, typename E, typename Id>
+inline Graph<V, E, Id> &Graph<V, E, Id>::operator=(
+    const std::initializer_list<Id> &list)
 {
     graph_.clear();
     init_(list);
+    return *this;
 }
 
 template <typename V, typename E, typename Id>
@@ -185,9 +204,6 @@ inline void Graph<V, E, Id>::erase_vertex(Id id)
 /**
  * @brief Creates a new vertex of given id and value.
  *
- * @tparam  V  vertex data type.
- * @tparam  E  edge data type.
- * @tparam  Id  vertex identification type.
  * @param  id  vertex id.
  * @param  value  (optional) value to be associated with the vertex
  * (vertex will have no value if omitted).
@@ -202,9 +218,6 @@ inline void Graph<V, E, Id>::make_vertex(Id id, Vopt value)
  * @brief Creates a one-directional edge from start to end with a given value.
  * Additionally creates vertices if needed.
  *
- * @tparam  V  vertex data type.
- * @tparam  E  edge data type.
- * @tparam  Id  vertex identification type.
  * @param  start  edge starting point.
  * @param  end  edge ending point.
  * @param  data  (optional) value to be associated with the edge.
@@ -230,9 +243,6 @@ inline void Graph<V, E, Id>::make_dir(Id start, Id end, Eopt data)
  * directions of the edge (going from start to end gives you the same value as
  * going from end to start).
  *
- * @tparam  V  vertex data type.
- * @tparam  E  edge data type.
- * @tparam  Id  vertex identification type.
  * @param  start  edge starting point.
  * @param  end  edge ending point.
  * @param  data  (optional) value to be associated with the edge
@@ -436,9 +446,6 @@ inline std::string Graph<V, E, Id>::to_string() const
 /**
  * @brief Returns the amount of vertices a graph has.
  *
- * @tparam V
- * @tparam E
- * @tparam Id
  * @return std::size_t
  */
 template <typename V, typename E, typename Id>
@@ -461,9 +468,6 @@ inline int Graph<V, E, Id>::edge_count() const
 /**
  * @brief Return true if the graph contains no vertices.
  *
- * @tparam V
- * @tparam E
- * @tparam Id
  * @return true
  * @return false
  */
@@ -476,9 +480,6 @@ inline bool Graph<V, E, Id>::empty() const
 /**
  * @brief Returns true if the graph has at least a single vertex.
  *
- * @tparam V
- * @tparam E
- * @tparam Id
  * @return true
  * @return false
  */
@@ -493,9 +494,6 @@ inline Graph<V, E, Id>::operator bool() const
  * met:
  *
  *
- * @tparam V
- * @tparam E
- * @tparam Id
  * @param other
  * @return true
  * @return false
@@ -504,5 +502,11 @@ template <typename V, typename E, typename Id>
 inline bool Graph<V, E, Id>::operator==(const Graph &other) const
 {
     return this->graph_ == other.graph_;
+}
+
+template <typename V, typename E, typename Id>
+inline bool Graph<V, E, Id>::operator!=(const Graph &other) const
+{
+    return !(*this == other);
 }
 #endif
