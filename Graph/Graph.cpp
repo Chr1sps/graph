@@ -74,6 +74,29 @@ inline bool Graph<V, E, Id>::is_edge_equal_(Id start, Id end,
     return graph_.at(start).at(end) == graph_.at(other_start).at(other_end);
 }
 
+template <typename V, typename E, typename Id>
+inline void Graph<V, E, Id>::init_(const Graph &other)
+{
+    for (auto [k, v] : other.graph_)
+    {
+        graph_[k] = (v.has_value() ? Vertex(v.value()) : Vertex());
+        for (auto [ek, ev] : v)
+        {
+            if (ev.has_value())
+                graph_[k][ek] = ev.value();
+            else
+                graph_[k][ek] = std::nullopt;
+        }
+    }
+}
+template <typename V, typename E, typename Id>
+inline void Graph<V, E, Id>::init_(const std::initializer_list<Id> &list)
+{
+    for (const Id &id : list)
+    {
+        make_vertex(id);
+    }
+}
 // Graph::Vertex methods
 template <typename V, typename E, typename Id>
 inline Graph<V, E, Id>::Vertex::Vertex(Vopt data) : Vopt(data)
@@ -105,24 +128,30 @@ template <typename V, typename E, typename Id>
 inline Graph<V, E, Id>::Graph() : graph_(std::map<Id, Vertex>())
 {
 }
+template <typename V, typename E, typename Id>
+inline Graph<V, E, Id>::Graph(const Graph &other) : graph_(std::map<Id, Vertex>())
+{
+    init_(other);
+}
 
 template <typename V, typename E, typename Id>
 inline Graph<V, E, Id>::Graph(const std::initializer_list<Id> &list) : graph_(std::map<Id, Vertex>())
 {
-    for (const Id &id : list)
-    {
-        make_vertex(id);
-    }
+    init_(list);
+}
+
+template <typename V, typename E, typename Id>
+inline void Graph<V, E, Id>::operator=(const Graph &other)
+{
+    graph_.clear();
+    init_(other);
 }
 
 template <typename V, typename E, typename Id>
 inline void Graph<V, E, Id>::operator=(const std::initializer_list<Id> &list)
 {
     graph_.clear();
-    for (const Id &id : list)
-    {
-        make_vertex(id);
-    }
+    init_(list);
 }
 
 template <typename V, typename E, typename Id>

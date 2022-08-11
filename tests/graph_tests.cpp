@@ -433,4 +433,12 @@ TEST_CASE("Comparing graphs", "[COMP]")
         second = {1, 2, 3, 4};
         REQUIRE(first == second);
     }
+    SECTION("copying assignment")
+    {
+        first = {1, 2, 3, 4};
+        first.join_dir(1, 3, 4);
+        first.join_dir(2, 1);
+        Graph<int, int> other(first);
+        REQUIRE(first == other);
+    }
 }

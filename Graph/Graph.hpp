@@ -51,15 +51,18 @@ class Graph
     template <typename... Args>
     static std::string format_(const std::string &, Args &&...);
 
+    void init_(const Graph &);
+    void init_(const std::initializer_list<Id> &);
+
 public:
     Graph();
-    Graph(const Graph &); // TODO
-    Graph(Graph &&);      // TODO
+    Graph(const Graph &);
+    Graph(Graph &&); // TODO
     Graph(const std::initializer_list<Id> &);
     virtual ~Graph();
 
-    void operator=(const Graph &); // TODO
-    void operator=(Graph &&);      // TODO
+    void operator=(const Graph &);
+    void operator=(Graph &&); // TODO
     void operator=(const std::initializer_list<Id> &);
 
     void make_vertex(Id, Vopt = Nil);  // * TESTED
