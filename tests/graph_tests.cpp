@@ -1,4 +1,5 @@
 #include "Graph.hpp"
+
 #include <catch2/catch_all.hpp>
 
 /**

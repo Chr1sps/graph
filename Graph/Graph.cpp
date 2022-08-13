@@ -1,10 +1,13 @@
 #ifndef __GRAPH_CPP_CHRISPS__
 #define __GRAPH_CPP_CHRISPS__
+
 #include "Graph.hpp"
 #include "graph_exceptions.hpp"
+
 #ifdef HAS_FORMAT
 #include <format>
 #endif
+
 #include <initializer_list>
 #include <sstream>
 #include <string>
@@ -12,7 +15,8 @@
 
 template <typename V, typename E, typename Id>
 template <typename U>
-inline std::string Graph<V, E, Id>::fmt_(const std::string &fmt, U &&arg)
+inline std::string
+Graph<V, E, Id>::fmt_(const std::string &fmt, U &&arg)
 {
     std::ostringstream sstr;
     bool bracket = false;
@@ -35,8 +39,8 @@ inline std::string Graph<V, E, Id>::fmt_(const std::string &fmt, U &&arg)
 }
 template <typename V, typename E, typename Id>
 template <typename U, typename... Args>
-inline std::string Graph<V, E, Id>::fmt_(
-    const std::string &fmt, U &&arg, Args &&...args)
+inline std::string
+Graph<V, E, Id>::fmt_(const std::string &fmt, U &&arg, Args &&...args)
 {
     std::ostringstream sstr;
     bool bracket = false;
@@ -60,25 +64,27 @@ inline std::string Graph<V, E, Id>::fmt_(
 }
 template <typename V, typename E, typename Id>
 template <typename... Args>
-inline std::string Graph<V, E, Id>::format_(
-    const std::string &fmt, Args &&...args)
+inline std::string
+Graph<V, E, Id>::format_(const std::string &fmt, Args &&...args)
 {
 #ifdef HAS_FORMAT
-    return std::format(fmt, args);
+    return std::format(fmt, std::forward<Args>(args)...);
 #else
     return fmt_(fmt, std::forward<Args>(args)...);
 #endif
 }
 
 template <typename V, typename E, typename Id>
-inline bool Graph<V, E, Id>::is_edge_equal_(Id start, Id end,
-                                            Id other_start, Id other_end) const
+inline bool
+Graph<V, E, Id>::is_edge_equal_(Id start, Id end,
+                                Id other_start, Id other_end) const
 {
     return graph_.at(start).at(end) == graph_.at(other_start).at(other_end);
 }
 
 template <typename V, typename E, typename Id>
-inline void Graph<V, E, Id>::init_(const Graph &other)
+inline void
+Graph<V, E, Id>::init_(const Graph &other)
 {
     for (auto [k, v] : other.graph_)
     {
@@ -93,7 +99,8 @@ inline void Graph<V, E, Id>::init_(const Graph &other)
     }
 }
 template <typename V, typename E, typename Id>
-inline void Graph<V, E, Id>::init_(const std::initializer_list<Id> &list)
+inline void
+Graph<V, E, Id>::init_(const std::initializer_list<Id> &list)
 {
     for (const Id &id : list)
     {
@@ -107,7 +114,8 @@ inline Graph<V, E, Id>::Vertex::Vertex(Vopt data) : Vopt(data)
 }
 
 template <typename V, typename E, typename Id>
-inline bool Graph<V, E, Id>::Vertex::operator==(const Vertex &other) const
+inline bool
+Graph<V, E, Id>::Vertex::operator==(const Vertex &other) const
 {
     if (dynamic_cast<const Vopt &>(*this) != dynamic_cast<const Vopt &>(other))
         return false;
@@ -131,17 +139,20 @@ template <typename V, typename E, typename Id>
 inline Graph<V, E, Id>::Graph() : graph_(std::map<Id, Vertex>())
 {
 }
+
 template <typename V, typename E, typename Id>
 inline Graph<V, E, Id>::Graph(const Graph &other)
     : graph_(std::map<Id, Vertex>())
 {
     init_(other);
 }
+
 template <typename V, typename E, typename Id>
 inline Graph<V, E, Id>::Graph(Graph &&other)
     : graph_(std::move(other.graph_))
 {
 }
+
 template <typename V, typename E, typename Id>
 inline Graph<V, E, Id>::Graph(const std::initializer_list<Id> &list)
     : graph_(std::map<Id, Vertex>())
@@ -150,7 +161,8 @@ inline Graph<V, E, Id>::Graph(const std::initializer_list<Id> &list)
 }
 
 template <typename V, typename E, typename Id>
-inline Graph<V, E, Id> &Graph<V, E, Id>::operator=(const Graph &other)
+inline Graph<V, E, Id> &
+Graph<V, E, Id>::operator=(const Graph &other)
 {
     graph_.clear();
     init_(other);
@@ -158,14 +170,16 @@ inline Graph<V, E, Id> &Graph<V, E, Id>::operator=(const Graph &other)
 }
 
 template <typename V, typename E, typename Id>
-inline Graph<V, E, Id> &Graph<V, E, Id>::operator=(Graph &&other)
+inline Graph<V, E, Id> &
+Graph<V, E, Id>::operator=(Graph &&other)
 {
     graph_ = std::move(other.graph_);
     return *this;
 }
 
 template <typename V, typename E, typename Id>
-inline Graph<V, E, Id> &Graph<V, E, Id>::operator=(
+inline Graph<V, E, Id> &
+Graph<V, E, Id>::operator=(
     const std::initializer_list<Id> &list)
 {
     graph_.clear();
@@ -179,7 +193,8 @@ inline Graph<V, E, Id>::~Graph()
 }
 
 template <typename V, typename E, typename Id>
-inline void Graph<V, E, Id>::update_vertex(Id id, Vopt value)
+inline void
+Graph<V, E, Id>::update_vertex(Id id, Vopt value)
 {
     try
     {
@@ -192,7 +207,8 @@ inline void Graph<V, E, Id>::update_vertex(Id id, Vopt value)
 }
 
 template <typename V, typename E, typename Id>
-inline void Graph<V, E, Id>::erase_vertex(Id id)
+inline void
+Graph<V, E, Id>::erase_vertex(Id id)
 {
     for (auto &v : graph_)
     {
@@ -209,7 +225,8 @@ inline void Graph<V, E, Id>::erase_vertex(Id id)
  * (vertex will have no value if omitted).
  */
 template <typename V, typename E, typename Id>
-inline void Graph<V, E, Id>::make_vertex(Id id, Vopt value)
+inline void
+Graph<V, E, Id>::make_vertex(Id id, Vopt value)
 {
     graph_[id] = Vertex(value);
 }
@@ -224,7 +241,8 @@ inline void Graph<V, E, Id>::make_vertex(Id id, Vopt value)
  * (edge will have no value if omitted).
  */
 template <typename V, typename E, typename Id>
-inline void Graph<V, E, Id>::make_dir(Id start, Id end, Eopt data)
+inline void
+Graph<V, E, Id>::make_dir(Id start, Id end, Eopt data)
 {
     graph_[start][end] = data;
     try
@@ -249,14 +267,16 @@ inline void Graph<V, E, Id>::make_dir(Id start, Id end, Eopt data)
  * (edge will have no value if omitted).
  */
 template <typename V, typename E, typename Id>
-inline void Graph<V, E, Id>::make_bidir(Id start, Id end, Eopt data)
+inline void
+Graph<V, E, Id>::make_bidir(Id start, Id end, Eopt data)
 {
     graph_[start][end] = data;
     graph_[end][start] = data;
 }
 
 template <typename V, typename E, typename Id>
-inline void Graph<V, E, Id>::join_dir(Id start, Id end, Eopt data)
+inline void
+Graph<V, E, Id>::join_dir(Id start, Id end, Eopt data)
 {
     try
     {
@@ -270,7 +290,8 @@ inline void Graph<V, E, Id>::join_dir(Id start, Id end, Eopt data)
 }
 
 template <typename V, typename E, typename Id>
-inline void Graph<V, E, Id>::join_bidir(Id start, Id end, Eopt data)
+inline void
+Graph<V, E, Id>::join_bidir(Id start, Id end, Eopt data)
 {
     try
     {
@@ -284,7 +305,8 @@ inline void Graph<V, E, Id>::join_bidir(Id start, Id end, Eopt data)
 }
 
 template <typename V, typename E, typename Id>
-inline void Graph<V, E, Id>::update_dir(Id start, Id end, Eopt data)
+inline void
+Graph<V, E, Id>::update_dir(Id start, Id end, Eopt data)
 {
     try
     {
@@ -298,7 +320,8 @@ inline void Graph<V, E, Id>::update_dir(Id start, Id end, Eopt data)
 }
 
 template <typename V, typename E, typename Id>
-inline void Graph<V, E, Id>::update_bidir(Id start, Id end, Eopt data)
+inline void
+Graph<V, E, Id>::update_bidir(Id start, Id end, Eopt data)
 {
     try
     {
@@ -312,26 +335,30 @@ inline void Graph<V, E, Id>::update_bidir(Id start, Id end, Eopt data)
 }
 
 template <typename V, typename E, typename Id>
-inline void Graph<V, E, Id>::erase_dir(Id start, Id end)
+inline void
+Graph<V, E, Id>::erase_dir(Id start, Id end)
 {
     graph_[start].erase(end);
 }
 
 template <typename V, typename E, typename Id>
-inline void Graph<V, E, Id>::erase_bidir(Id start, Id end)
+inline void
+Graph<V, E, Id>::erase_bidir(Id start, Id end)
 {
     erase_dir(start, end);
     erase_dir(end, start);
 }
 
 template <typename V, typename E, typename Id>
-inline bool Graph<V, E, Id>::is_vertex(Id id) const
+inline bool
+Graph<V, E, Id>::is_vertex(Id id) const
 {
     return graph_.contains(id);
 }
 
 template <typename V, typename E, typename Id>
-inline bool Graph<V, E, Id>::is_dir(Id start, Id end) const
+inline bool
+Graph<V, E, Id>::is_dir(Id start, Id end) const
 {
     try
     {
@@ -344,7 +371,8 @@ inline bool Graph<V, E, Id>::is_dir(Id start, Id end) const
 }
 
 template <typename V, typename E, typename Id>
-inline bool Graph<V, E, Id>::is_bidir(Id start, Id end) const
+inline bool
+Graph<V, E, Id>::is_bidir(Id start, Id end) const
 {
     try
     {
@@ -361,7 +389,8 @@ inline bool Graph<V, E, Id>::is_bidir(Id start, Id end) const
 }
 
 template <typename V, typename E, typename Id>
-inline bool Graph<V, E, Id>::has_data(Id id) const
+inline bool
+Graph<V, E, Id>::has_data(Id id) const
 {
     try
     {
@@ -374,7 +403,8 @@ inline bool Graph<V, E, Id>::has_data(Id id) const
 }
 
 template <typename V, typename E, typename Id>
-inline bool Graph<V, E, Id>::has_data(Id start, Id end) const
+inline bool
+Graph<V, E, Id>::has_data(Id start, Id end) const
 {
     try
     {
@@ -387,7 +417,8 @@ inline bool Graph<V, E, Id>::has_data(Id start, Id end) const
 }
 
 template <typename V, typename E, typename Id>
-inline V Graph<V, E, Id>::data(Id id) const
+inline V
+Graph<V, E, Id>::data(Id id) const
 {
     try
     {
@@ -404,7 +435,8 @@ inline V Graph<V, E, Id>::data(Id id) const
 }
 
 template <typename V, typename E, typename Id>
-inline E Graph<V, E, Id>::data(Id start, Id end) const
+inline E
+Graph<V, E, Id>::data(Id start, Id end) const
 {
     try
     {
@@ -422,7 +454,8 @@ inline E Graph<V, E, Id>::data(Id start, Id end) const
 
 // graph printing method
 template <typename V, typename E, typename Id>
-inline std::string Graph<V, E, Id>::to_string() const
+inline std::string
+Graph<V, E, Id>::to_string() const
 {
     std::string result = "";
     for (const auto &v : graph_)
@@ -449,13 +482,15 @@ inline std::string Graph<V, E, Id>::to_string() const
  * @return std::size_t
  */
 template <typename V, typename E, typename Id>
-inline std::size_t Graph<V, E, Id>::size() const
+inline std::size_t
+Graph<V, E, Id>::size() const
 {
     return graph_.size();
 }
 
 template <typename V, typename E, typename Id>
-inline int Graph<V, E, Id>::edge_count() const
+inline int
+Graph<V, E, Id>::edge_count() const
 {
     int result = 0;
     for (auto [k, v] : graph_)
@@ -472,7 +507,8 @@ inline int Graph<V, E, Id>::edge_count() const
  * @return false
  */
 template <typename V, typename E, typename Id>
-inline bool Graph<V, E, Id>::empty() const
+inline bool
+Graph<V, E, Id>::empty() const
 {
     return graph_.empty();
 }
@@ -499,13 +535,15 @@ inline Graph<V, E, Id>::operator bool() const
  * @return false
  */
 template <typename V, typename E, typename Id>
-inline bool Graph<V, E, Id>::operator==(const Graph &other) const
+inline bool
+Graph<V, E, Id>::operator==(const Graph &other) const
 {
     return this->graph_ == other.graph_;
 }
 
 template <typename V, typename E, typename Id>
-inline bool Graph<V, E, Id>::operator!=(const Graph &other) const
+inline bool
+Graph<V, E, Id>::operator!=(const Graph &other) const
 {
     return !(*this == other);
 }

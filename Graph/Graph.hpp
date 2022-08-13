@@ -1,5 +1,6 @@
 #ifndef __GRAPH_HPP_CHRISPS__
 #define __GRAPH_HPP_CHRISPS__
+
 #include <cstddef>
 #include <initializer_list>
 #include <map>
