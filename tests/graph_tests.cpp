@@ -1,6 +1,6 @@
 #include "Graph.hpp"
 
-#include <catch2/catch_all.hpp>
+#include <catch2/catch_test_macros.hpp>
 
 /**
  * @brief Used for testing side-effects of methods under exception-throwing
@@ -467,5 +467,74 @@ TEST_CASE("Comparing graphs - false", "[COMP][FALSE]")
         first.join_dir(2, 3);
         second.join_dir(3, 2);
         REQUIRE(first != second);
+    }
+}
+
+TEST_CASE("Move semantics")
+{
+    Graph<int, int> first = {1, 2, 3, 4};
+
+    first.join_dir(1, 3);
+    first.join_bidir(1, 2, 1);
+    first.join_dir(2, 4, 3);
+
+    string result_str = "1: (2: 1) 3\n\
+2: (1: 1) (4: 3)\n\
+3:\n\
+4:\n";
+
+    SECTION("move constructor")
+    {
+        auto other(std::move(first));
+
+        REQUIRE(other.size() == 4);
+        REQUIRE(other.edge_count() == 4);
+
+        REQUIRE(other.is_vertex(1));
+        REQUIRE(other.is_vertex(2));
+        REQUIRE(other.is_vertex(3));
+        REQUIRE(other.is_vertex(4));
+
+        REQUIRE(other.is_dir(1, 3));
+        REQUIRE(other.is_dir(2, 4));
+        REQUIRE(other.is_bidir(1, 2));
+
+        REQUIRE_FALSE(other.has_data(1, 3));
+        REQUIRE(other.has_data(1, 2));
+        REQUIRE(other.has_data(2, 1));
+        REQUIRE(other.has_data(2, 4));
+
+        REQUIRE(other.data(1, 2) == 1);
+        REQUIRE(other.data(2, 1) == 1);
+        REQUIRE(other.data(2, 4) == 3);
+
+        REQUIRE(other.to_string() == result_str);
+    }
+    SECTION("move assignment")
+    {
+        auto other = std::move(first);
+
+        REQUIRE(other.size() == 4);
+        REQUIRE(other.edge_count() == 4);
+
+        REQUIRE(other.is_vertex(1));
+        REQUIRE(other.is_vertex(2));
+        REQUIRE(other.is_vertex(3));
+        REQUIRE(other.is_vertex(4));
+
+        REQUIRE(other.is_dir(1, 3));
+        REQUIRE(other.is_dir(2, 4));
+        REQUIRE(other.is_bidir(1, 2));
+
+        REQUIRE_FALSE(other.has_data(1, 3));
+        REQUIRE(other.has_data(1, 2));
+        REQUIRE(other.has_data(2, 1));
+        REQUIRE(other.has_data(2, 4));
+
+        REQUIRE(other.data(1, 2) == 1);
+        REQUIRE(other.data(2, 1) == 1);
+        REQUIRE(other.data(2, 4) == 3);
+
+        REQUIRE(other.to_string() == result_str);
     }
 }

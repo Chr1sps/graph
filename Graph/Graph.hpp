@@ -64,15 +64,15 @@ class Graph
     void init_(const std::initializer_list<Id> &);
 
 public:
-    Graph();
+    Graph(); // * TESTED
     Graph(const Graph &);
-    Graph(Graph &&);
+    Graph(Graph &&); // * TESTED
     Graph(const std::initializer_list<Id> &);
     virtual ~Graph();
 
     Graph &operator=(const Graph &);
-    Graph &operator=(Graph &&);
-    Graph &operator=(const std::initializer_list<Id> &);
+    Graph &operator=(Graph &&);                          // * TESTED
+    Graph &operator=(const std::initializer_list<Id> &); // * TESTED ?!?!?
 
     void make_vertex(Id, Vopt = Nil);  // * TESTED
     void make_dir(Id, Id, Eopt = Nil); // * TESTED
@@ -89,12 +89,12 @@ public:
     void erase_dir(Id, Id);
     void erase_bidir(Id, Id);
 
-    bool is_vertex(Id) const; // * TESTED
-    bool is_dir(Id, Id) const;
-    bool is_bidir(Id, Id) const;
+    bool is_vertex(Id) const;    // * TESTED
+    bool is_dir(Id, Id) const;   // * TESTED
+    bool is_bidir(Id, Id) const; // * TESTED
 
-    bool has_data(Id, Id) const;
-    bool has_data(Id) const; // * TESTED
+    bool has_data(Id, Id) const; // * TESTED
+    bool has_data(Id) const;     // * TESTED
 
     E data(Id, Id) const;
     V data(Id) const; // * TESTED

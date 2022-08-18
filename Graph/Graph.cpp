@@ -37,6 +37,7 @@ Graph<V, E, Id>::fmt_(const std::string &fmt, U &&arg)
     }
     return sstr.str();
 }
+
 template <typename V, typename E, typename Id>
 template <typename U, typename... Args>
 inline std::string
@@ -62,6 +63,7 @@ Graph<V, E, Id>::fmt_(const std::string &fmt, U &&arg, Args &&...args)
     }
     return sstr.str();
 }
+
 template <typename V, typename E, typename Id>
 template <typename... Args>
 inline std::string
@@ -74,6 +76,16 @@ Graph<V, E, Id>::format_(const std::string &fmt, Args &&...args)
 #endif
 }
 
+/**
+ * @brief Returns true if values of both given dir edges are equal or if both
+ * edges have no value.
+ *
+ * @param  start  - first edge start vertex id
+ * @param  end  - first edge end vertex id
+ * @param  other_start  - other edge start vertex id
+ * @param  other_end  - other edge end vertex id
+ * @return bool
+ */
 template <typename V, typename E, typename Id>
 inline bool
 Graph<V, E, Id>::is_edge_equal_(Id start, Id end,
@@ -98,6 +110,7 @@ Graph<V, E, Id>::init_(const Graph &other)
         }
     }
 }
+
 template <typename V, typename E, typename Id>
 inline void
 Graph<V, E, Id>::init_(const std::initializer_list<Id> &list)
@@ -107,7 +120,7 @@ Graph<V, E, Id>::init_(const std::initializer_list<Id> &list)
         make_vertex(id);
     }
 }
-// Graph::Vertex methods
+
 template <typename V, typename E, typename Id>
 inline Graph<V, E, Id>::Vertex::Vertex(Vopt data) : Vopt(data)
 {
@@ -134,7 +147,6 @@ Graph<V, E, Id>::Vertex::operator==(const Vertex &other) const
     return true;
 }
 
-// Graph methods
 template <typename V, typename E, typename Id>
 inline Graph<V, E, Id>::Graph() : graph_(std::map<Id, Vertex>())
 {
@@ -388,6 +400,14 @@ Graph<V, E, Id>::is_bidir(Id start, Id end) const
     }
 }
 
+/**
+ * @brief Returns true if the vertex of given id has data.
+ *
+ * @param id vertex id.
+ * @throws VertexNotFoundException - when a vertex of given id cannot be found.
+ * @return bool
+ *
+ */
 template <typename V, typename E, typename Id>
 inline bool
 Graph<V, E, Id>::has_data(Id id) const
@@ -402,6 +422,14 @@ Graph<V, E, Id>::has_data(Id id) const
     }
 }
 
+/**
+ * @brief Returns true if the given edge has data.
+ *
+ * @param start edge start vertex id
+ * @param end edge end vertex id
+ * @throws EdgeNotFoundException - when given edge cannot be found.
+ * @return bool
+ */
 template <typename V, typename E, typename Id>
 inline bool
 Graph<V, E, Id>::has_data(Id start, Id end) const
@@ -416,6 +444,15 @@ Graph<V, E, Id>::has_data(Id start, Id end) const
     }
 }
 
+/**
+ * @brief Returns given vertex's data.
+ *
+ * @param id vertex id.
+ * @throws VertexNotFoundException - when a vertex of given id cannot be found.
+ * @throws VertexWithoutValueException - when a vertex of given id has no data.
+ * @return V - vertex's data.
+ *
+ */
 template <typename V, typename E, typename Id>
 inline V
 Graph<V, E, Id>::data(Id id) const
@@ -434,6 +471,15 @@ Graph<V, E, Id>::data(Id id) const
     }
 }
 
+/**
+ * @brief Returns given edge's data.
+ *
+ * @param start edge start vertex id.
+ * @param end edge end vertex id.
+ * @throws EdgeNotFoundException - when given edge cannot be found.
+ * @throws EdgeWithoutValueException - when given edge has no data.
+ * @return E
+ */
 template <typename V, typename E, typename Id>
 inline E
 Graph<V, E, Id>::data(Id start, Id end) const
@@ -452,7 +498,12 @@ Graph<V, E, Id>::data(Id start, Id end) const
     }
 }
 
-// graph printing method
+/**
+ * @brief Returns a string containing graph info. Example string:
+ * "1: 2 3\\n(2: 4): 1 (4: 3)\\n3: \\n4: (2: 3)\\n"
+ *
+ * @return std::string
+ */
 template <typename V, typename E, typename Id>
 inline std::string
 Graph<V, E, Id>::to_string() const
@@ -503,8 +554,7 @@ Graph<V, E, Id>::edge_count() const
 /**
  * @brief Return true if the graph contains no vertices.
  *
- * @return true
- * @return false
+ * @return bool
  */
 template <typename V, typename E, typename Id>
 inline bool
@@ -516,8 +566,7 @@ Graph<V, E, Id>::empty() const
 /**
  * @brief Returns true if the graph has at least a single vertex.
  *
- * @return true
- * @return false
+ * @return bool
  */
 template <typename V, typename E, typename Id>
 inline Graph<V, E, Id>::operator bool() const
@@ -526,13 +575,12 @@ inline Graph<V, E, Id>::operator bool() const
 }
 
 /**
- * @brief Returns true if both graphs are identical. Conditions that must be
- * met:
+ * @brief Returns true if both graphs are identical, that is, both graphs have
+ * identical vertices (identical id and data) and edges.
  *
  *
  * @param other
- * @return true
- * @return false
+ * @return bool
  */
 template <typename V, typename E, typename Id>
 inline bool
@@ -541,6 +589,13 @@ Graph<V, E, Id>::operator==(const Graph &other) const
     return this->graph_ == other.graph_;
 }
 
+/**
+ * @brief Returns true if graphs aren't identical (graphs are identical when
+ * they both have identical vertices (identical id and data) and edges).
+ *
+ * @param other
+ * @return bool
+ */
 template <typename V, typename E, typename Id>
 inline bool
 Graph<V, E, Id>::operator!=(const Graph &other) const
