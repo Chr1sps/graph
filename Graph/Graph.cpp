@@ -498,6 +498,20 @@ Graph<V, E, Id>::data(Id start, Id end) const
     }
 }
 
+template <typename V, typename E, typename Id>
+inline void
+Graph<V, E, Id>::clear()
+{
+    graph_.clear();
+}
+
+template <typename V, typename E, typename Id>
+inline void
+Graph<V, E, Id>::swap(const Graph &other)
+{
+    graph_.swap(other.graph_);
+}
+
 /**
  * @brief Returns a string containing graph info. Example string:
  * "1: 2 3\\n(2: 4): 1 (4: 3)\\n3: \\n4: (2: 3)\\n"

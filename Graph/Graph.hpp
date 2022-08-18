@@ -1,6 +1,16 @@
 #ifndef __GRAPH_HPP_CHRISPS__
 #define __GRAPH_HPP_CHRISPS__
 
+#if defined(_WIN32)
+#if defined(EXPORTING_GRAPH)
+#define DECLSPEC __declspec(dllexport)
+#else
+#define DECLSPEC __declspec(dllimport)
+#endif
+#else // non windows
+#define DECLSPEC
+#endif
+
 #include <cstddef>
 #include <initializer_list>
 #include <map>
@@ -98,6 +108,9 @@ public:
 
     E data(Id, Id) const;
     V data(Id) const; // * TESTED
+
+    void clear();
+    void swap(const Graph &);
 
     std::string to_string() const;
     // friend std::ofstream &operator<<(std::ofstream &, Graph<V, E>);
