@@ -56,7 +56,42 @@ install(TARGETS ${installable_libs} EXPORT GraphTargets DESTINATION lib)
 install(FILES Graph.hpp DESTINATION include)
 install(FILES ${EXCEPTIONS_HPP} DESTINATION include/exceptions)
 
+if(INCLUDE_TEST_SOURCE)
+    install(FILES tests/graph_tests.cpp DESTINATION tests)
+endif()
+
+if(INSTALL_TESTS)
+    install(TARGETS graph_tests.out DESTINATION bin)
+endif()
+
 set_target_properties(
-    Graph PROPERTIES
-    POSITION_INDEPENDENT_CODE ${BUILD_SHARED_LIBS}
+    Graph PROPERTIES POSITION_INDEPENDENT_CODE ${BUILD_SHARED_LIBS}
 )
+
+add_subdirectory(tests)
+
+add_executable(graph_tests.out tests/graph_tests.cpp)
+
+target_include_directories(
+    graph_tests.out
+    PRIVATE
+    "${PROJECT_BINARY_DIR}"
+    "${PROJECT_SOURCE_DIR}/Graph"
+)
+
+target_link_libraries(graph_tests.out PRIVATE Graph Catch2::Catch2WithMain)
+
+# testing stuff
+Include(FetchContent)
+FetchContent_Declare(
+    Catch2
+    GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+    GIT_TAG origin/devel)
+FetchContent_MakeAvailable(Catch2)
+
+list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR/extras})
+include(CTest)
+include(Catch)
+catch_discover_tests(graph_tests.out)
+
+set(CMAKE_CTEST_ARGUMENTS "--extra-verbose")

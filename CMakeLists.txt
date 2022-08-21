@@ -33,7 +33,8 @@ else()
 
     if(USE_LIBCPP)
         message("Using clang libc++.")
-        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++ -lc++ -L/usr/lib/x86-64-linux-gnu/libc++.so")
+        set(CMAKE_EXE_LINKER_FLAGS
+            "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++ -lc++ -L/usr/lib/x86-64-linux-gnu/libc++.so")
 
         if(USE_EXPERIMENTAL)
             message("Using experimental features.")
@@ -49,10 +50,8 @@ endif()
 configure_file(Graph_config.hpp.in Graph_config.hpp)
 
 add_subdirectory(Graph)
-add_subdirectory(tests)
 
 add_executable(main.out main.cpp)
-add_executable(graph_tests.out tests/graph_tests.cpp)
 
 target_include_directories(
     main.out
@@ -60,33 +59,15 @@ target_include_directories(
     "${PROJECT_BINARY_DIR}"
     "${PROJECT_SOURCE_DIR}/Graph"
 )
-target_include_directories(
-    graph_tests.out
-    PUBLIC
-    "${PROJECT_BINARY_DIR}"
-    "${PROJECT_SOURCE_DIR}/Graph"
-)
 
 target_link_libraries(main.out PUBLIC Graph)
-target_link_libraries(graph_tests.out PUBLIC Graph Catch2::Catch2WithMain)
-
-# testing stuff
-Include(FetchContent)
-FetchContent_Declare(
-    Catch2
-    GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-    GIT_TAG origin/devel)
-FetchContent_MakeAvailable(Catch2)
-
-list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR/extras})
-include(CTest)
-include(Catch)
-catch_discover_tests(graph_tests.out)
-
-set(CMAKE_CTEST_ARGUMENTS "--extra-verbose")
 
 # installation related stuff
 option(BUILD_SHARED_LIBS "Build using shared libraries" FALSE)
+option(INSTALL_TESTS "Add unit tests to installed package" FALSE)
+option(INCLUDE_TEST_SOURCE
+    "Installed library will include test source code" TRUE
+)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}")
@@ -99,7 +80,6 @@ set(CPACK_PACKAGE_VERSION_MINOR "${Graph_VERSION_MINOR}")
 set(CPACK_SOURCE_GENERATOR "TGZ")
 include(CPack)
 
-install(TARGETS graph_tests.out DESTINATION bin)
 install(FILES "${PROJECT_BINARY_DIR}/Graph_config.hpp" DESTINATION include)
 install(
     EXPORT GraphTargets
