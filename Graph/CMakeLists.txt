@@ -21,7 +21,11 @@ add_library(
     ${EXCEPTIONS_CPP}
 )
 
-target_include_directories(Graph PUBLIC exceptions)
+target_include_directories(Graph
+    PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/exceptions>
+    $<INSTALL_INTERFACE:include/exceptions>
+)
 include(CheckCXXSourceCompiles)
 
 check_cxx_source_compiles("
@@ -41,10 +45,18 @@ endif()
 
 target_compile_definitions(Graph PRIVATE "EXPORTING_GRAPH")
 
-install(TARGETS Graph DESTINATION lib)
+set(installable_libs Graph)
+
+if(BETTER_FLAGS)
+    list(APPEND installable_libs compiler_flags)
+    target_link_libraries(Graph PUBLIC compiler_flags)
+endif()
+
+install(TARGETS ${installable_libs} EXPORT GraphTargets DESTINATION lib)
 install(FILES Graph.hpp DESTINATION include)
 install(FILES ${EXCEPTIONS_HPP} DESTINATION include/exceptions)
 
-if(BETTER_FLAGS)
-    target_link_libraries(Graph PUBLIC compiler_flags)
-endif()
+set_target_properties(
+    Graph PROPERTIES
+    POSITION_INDEPENDENT_CODE ${BUILD_SHARED_LIBS}
+)

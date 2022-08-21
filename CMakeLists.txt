@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.16.3)
 
 project(Graph VERSION 0.4)
 
+# compiler flags fuckery
 option(USE_LIBCPP "Use clang libc++ instead of gnu libstdc++" FALSE)
 option(USE_EXPERIMENTAL "Use experimental clang libc++ features" FALSE)
 
@@ -44,21 +45,8 @@ else()
     endif()
 endif()
 
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}")
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}")
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}")
-
-option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
-
+# main target definitions
 configure_file(Graph_config.hpp.in Graph_config.hpp)
-
-# Catch2 FetchContent declaration
-Include(FetchContent)
-FetchContent_Declare(
-    Catch2
-    GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-    GIT_TAG origin/devel)
-FetchContent_MakeAvailable(Catch2)
 
 add_subdirectory(Graph)
 add_subdirectory(tests)
@@ -82,18 +70,64 @@ target_include_directories(
 target_link_libraries(main.out PUBLIC Graph)
 target_link_libraries(graph_tests.out PUBLIC Graph Catch2::Catch2WithMain)
 
+# testing stuff
+Include(FetchContent)
+FetchContent_Declare(
+    Catch2
+    GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+    GIT_TAG origin/devel)
+FetchContent_MakeAvailable(Catch2)
+
 list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR/extras})
 include(CTest)
 include(Catch)
 catch_discover_tests(graph_tests.out)
+
 set(CMAKE_CTEST_ARGUMENTS "--extra-verbose")
 
-install(TARGETS graph_tests.out DESTINATION bin)
-install(FILES "${PROJECT_BINARY_DIR}/Graph_config.hpp" DESTINATION include)
+# installation related stuff
+option(BUILD_SHARED_LIBS "Build using shared libraries" FALSE)
+
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}")
 
 include(InstallRequiredSystemLibraries)
-set(CPACK_RESOUCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/license.txt")
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/License.txt")
 set(CPACK_PACKAGE_VERSION_MAJOR "${Graph_VERSION_MAJOR}")
 set(CPACK_PACKAGE_VERSION_MINOR "${Graph_VERSION_MINOR}")
 set(CPACK_SOURCE_GENERATOR "TGZ")
 include(CPack)
+
+install(TARGETS graph_tests.out DESTINATION bin)
+install(FILES "${PROJECT_BINARY_DIR}/Graph_config.hpp" DESTINATION include)
+install(
+    EXPORT GraphTargets
+    FILE GraphTargets.cmake
+    DESTINATION lib/cmake/Graph
+)
+
+include(CMakePackageConfigHelpers)
+
+configure_package_config_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/Config.cmake.in
+    "${CMAKE_CURRENT_BINARY_DIR}/GraphConfig.cmake"
+    INSTALL_DESTINATION "lib/cmake/config"
+    NO_SET_AND_CHECK_MACRO
+    NO_CHECK_REQUIRED_COMPONENTS_MACRO
+)
+write_basic_package_version_file(
+    "${CMAKE_CURRENT_BINARY_DIR}/GraphConfigVersion.cmake"
+    VERSION "${Graph_VERSION_MAJOR}.${Graph_VERSION_MINOR}"
+    COMPATIBILITY AnyNewerVersion
+)
+install(
+    FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/GraphConfig.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/GraphConfigVersion.cmake
+    DESTINATION lib/cmake/Graph
+)
+export(
+    EXPORT GraphTargets
+    FILE "${CMAKE_CURRENT_BINARY_DIR}/GraphTargets.cmake"
+)

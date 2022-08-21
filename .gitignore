@@ -1,3 +1,14 @@
+# cmake build binary tree directory
 build/
+
+# directory used for testing installation through cmake
+install/
+
+# custom makefile with useful recipes
+Makefile
+
+# vscode json files
 .vscode
+
+# custom main for testing various things
 main.cpp
