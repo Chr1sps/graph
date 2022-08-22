@@ -51,16 +51,12 @@ configure_file(Graph_config.hpp.in Graph_config.hpp)
 
 add_subdirectory(Graph)
 
-add_executable(main.out main.cpp)
+# option for testing with standalone main
+option(USE_MAIN "Add main/ subdirectory for testing code" TRUE)
 
-target_include_directories(
-    main.out
-    PUBLIC
-    "${PROJECT_BINARY_DIR}"
-    "${PROJECT_SOURCE_DIR}/Graph"
-)
-
-target_link_libraries(main.out PUBLIC Graph)
+if(USE_MAIN)
+    add_subdirectory(main)
+endif()
 
 # installation related stuff
 option(BUILD_SHARED_LIBS "Build using shared libraries" FALSE)
