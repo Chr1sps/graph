@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16.3)
 
-project(Graph VERSION 0.4)
+project(Graph VERSION 0.8)
 
 # compiler flags fuckery
 option(USE_LIBCPP "Use clang libc++ instead of gnu libstdc++" FALSE)
