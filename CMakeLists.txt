@@ -58,9 +58,9 @@ endif()
 
 # installation related stuff
 option(BUILD_SHARED_LIBS "Build using shared libraries" FALSE)
-option(INSTALL_TESTS "Add unit tests to installed package" FALSE)
+option(INSTALL_TESTS "Add unit tests to installed package" TRUE)
 option(INCLUDE_TEST_SOURCE
-    "Installed library will include test source code" TRUE
+    "Installed library will include test source code" FALSE
 )
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}")
