@@ -47,8 +47,6 @@ else()
 endif()
 
 # main target definitions
-configure_file(Graph_config.hpp.in Graph_config.hpp)
-
 add_subdirectory(Graph)
 
 # option for testing with standalone main
@@ -76,7 +74,6 @@ set(CPACK_PACKAGE_VERSION_MINOR "${Graph_VERSION_MINOR}")
 set(CPACK_SOURCE_GENERATOR "TGZ")
 include(CPack)
 
-install(FILES "${PROJECT_BINARY_DIR}/Graph_config.hpp" DESTINATION include)
 install(
     EXPORT GraphTargets
     FILE GraphTargets.cmake
