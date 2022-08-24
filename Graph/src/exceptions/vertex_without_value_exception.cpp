@@ -1,5 +1,10 @@
 #include "vertex_without_value_exception.hpp"
 
+VertexWithoutValueException::VertexWithoutValueException()
+    : what_str_("Vertex has no value.")
+{
+}
+
 VertexWithoutValueException::VertexWithoutValueException(const char *what_arg)
     : what_str_(what_arg)
 {

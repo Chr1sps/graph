@@ -19,6 +19,8 @@ set(
     EXCEPTIONS_CPP
     "edge_without_value_exception.cpp"
     "vertex_without_value_exception.cpp"
+    "edge_not_found_exception.cpp"
+    "vertex_not_found_exception.cpp"
 )
 
 list(TRANSFORM EXCEPTIONS_CPP PREPEND "${SRC_EXCEPTIONS}/")

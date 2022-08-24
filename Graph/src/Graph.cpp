@@ -214,7 +214,7 @@ Graph<V, E, Id>::update_vertex(Id id, Vopt value)
     }
     catch (const std::out_of_range &e)
     {
-        throw VertexNotFoundException("Vertex was not found.");
+        throw VertexNotFoundException();
     }
 }
 
@@ -297,7 +297,7 @@ Graph<V, E, Id>::join_dir(Id start, Id end, Eopt data)
     }
     catch (const std::out_of_range &e)
     {
-        throw VertexNotFoundException("Vertex was not found.");
+        throw VertexNotFoundException();
     }
 }
 
@@ -327,7 +327,7 @@ Graph<V, E, Id>::update_dir(Id start, Id end, Eopt data)
     }
     catch (const std::out_of_range &e)
     {
-        throw EdgeNotFoundException("Edge was not found.");
+        throw EdgeNotFoundException();
     }
 }
 
@@ -342,7 +342,7 @@ Graph<V, E, Id>::update_bidir(Id start, Id end, Eopt data)
     }
     catch (const std::out_of_range &e)
     {
-        throw EdgeNotFoundException("Edge was not found.");
+        throw EdgeNotFoundException();
     }
 }
 
@@ -378,7 +378,7 @@ Graph<V, E, Id>::is_dir(Id start, Id end) const
     }
     catch (const std::exception &e)
     {
-        throw VertexNotFoundException("Vertex was not found.");
+        throw VertexNotFoundException();
     }
 }
 
@@ -418,7 +418,7 @@ Graph<V, E, Id>::has_data(Id id) const
     }
     catch (const std::out_of_range &e)
     {
-        throw VertexNotFoundException("Vertex was not found.");
+        throw VertexNotFoundException();
     }
 }
 
@@ -440,7 +440,7 @@ Graph<V, E, Id>::has_data(Id start, Id end) const
     }
     catch (const std::out_of_range &e)
     {
-        throw EdgeNotFoundException("Edge was not found.");
+        throw EdgeNotFoundException();
     }
 }
 
@@ -463,11 +463,11 @@ Graph<V, E, Id>::data(Id id) const
     }
     catch (const std::out_of_range &e)
     {
-        throw VertexNotFoundException("Vertex was not found.");
+        throw VertexNotFoundException();
     }
     catch (const std::bad_optional_access &e)
     {
-        throw VertexWithoutValueException("Vertex has no value.");
+        throw VertexWithoutValueException();
     }
 }
 
@@ -490,11 +490,11 @@ Graph<V, E, Id>::data(Id start, Id end) const
     }
     catch (const std::out_of_range &e)
     {
-        throw EdgeNotFoundException("Edge was not found.");
+        throw EdgeNotFoundException();
     }
     catch (const std::bad_optional_access &e)
     {
-        throw EdgeWithoutValueException("Edge has no value.");
+        throw EdgeWithoutValueException();
     }
 }
 
@@ -616,4 +616,4 @@ Graph<V, E, Id>::operator!=(const Graph &other) const
 {
     return !(*this == other);
 }
-#endif
+#endif // __GRAPH_CPP_CHRISPS__
