@@ -512,7 +512,8 @@ TEST_CASE("Move semantics")
     }
     SECTION("move assignment")
     {
-        auto other = std::move(first);
+        Graph<int, int> other;
+        other = std::move(first);
 
         REQUIRE(other.size() == 4);
         REQUIRE(other.edge_count() == 4);

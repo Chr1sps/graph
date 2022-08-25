@@ -6,7 +6,15 @@
 
 #ifdef HAS_FORMAT
 #include <format>
-#endif
+#endif // HAS_FORMAT
+
+#ifdef DEBUG
+#define DEBUG_GRAPH
+#endif // DEBUG
+
+#ifdef DEBUG_GRAPH
+#include <iostream>
+#endif // DEBUG_GRAPH
 
 #include <initializer_list>
 #include <sstream>
@@ -150,12 +158,18 @@ Graph<V, E, Id>::Vertex::operator==(const Vertex &other) const
 template <typename V, typename E, typename Id>
 inline Graph<V, E, Id>::Graph() : graph_(std::map<Id, Vertex>())
 {
+#ifdef DEBUG_GRAPH
+    std::cout << "default constructor" << std::endl;
+#endif // DEBUG_GRAPH
 }
 
 template <typename V, typename E, typename Id>
 inline Graph<V, E, Id>::Graph(const Graph &other)
     : graph_(std::map<Id, Vertex>())
 {
+#ifdef DEBUG_GRAPH
+    std::cout << "copy constructor" << std::endl;
+#endif // DEBUG_GRAPH
     init_(other);
 }
 
@@ -163,12 +177,18 @@ template <typename V, typename E, typename Id>
 inline Graph<V, E, Id>::Graph(Graph &&other)
     : graph_(std::move(other.graph_))
 {
+#ifdef DEBUG_GRAPH
+    std::cout << "move constructor" << std::endl;
+#endif // DEBUG_GRAPH
 }
 
 template <typename V, typename E, typename Id>
 inline Graph<V, E, Id>::Graph(const std::initializer_list<Id> &list)
     : graph_(std::map<Id, Vertex>())
 {
+#ifdef DEBUG_GRAPH
+    std::cout << "initializer list constructor" << std::endl;
+#endif // DEBUG_GRAPH
     init_(list);
 }
 
@@ -176,6 +196,9 @@ template <typename V, typename E, typename Id>
 inline Graph<V, E, Id> &
 Graph<V, E, Id>::operator=(const Graph &other)
 {
+#ifdef DEBUG_GRAPH
+    std::cout << "copy assignment" << std::endl;
+#endif // DEBUG_GRAPH
     graph_.clear();
     init_(other);
     return *this;
@@ -185,6 +208,9 @@ template <typename V, typename E, typename Id>
 inline Graph<V, E, Id> &
 Graph<V, E, Id>::operator=(Graph &&other)
 {
+#ifdef DEBUG_GRAPH
+    std::cout << "move assignment" << std::endl;
+#endif // DEBUG_GRAPH
     graph_ = std::move(other.graph_);
     return *this;
 }
@@ -194,6 +220,9 @@ inline Graph<V, E, Id> &
 Graph<V, E, Id>::operator=(
     const std::initializer_list<Id> &list)
 {
+#ifdef DEBUG_GRAPH
+    std::cout << "initializer list assignment" << std::endl;
+#endif // DEBUG_GRAPH
     graph_.clear();
     init_(list);
     return *this;
@@ -202,6 +231,9 @@ Graph<V, E, Id>::operator=(
 template <typename V, typename E, typename Id>
 inline Graph<V, E, Id>::~Graph()
 {
+#ifdef DEBUG_GRAPH
+    std::cout << "destructor" << std::endl;
+#endif // DEBUG_GRAPH
 }
 
 template <typename V, typename E, typename Id>
