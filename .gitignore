@@ -11,4 +11,4 @@ Makefile
 .vscode
 
 # custom main for testing various things
-main/
+main.cpp

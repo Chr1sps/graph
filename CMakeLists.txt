@@ -76,6 +76,8 @@ add_library(
     ${EXCEPTIONS_CPP}
 )
 
+add_library(Graph::Graph ALIAS Graph)
+
 target_include_directories(
     Graph
     PUBLIC
@@ -154,13 +156,6 @@ set_target_properties(
     Graph PROPERTIES
     POSITION_INDEPENDENT_CODE ${BUILD_SHARED_LIBS}
 )
-
-# option for testing with standalone main
-option(USE_MAIN "Add main/ subdirectory for testing code" TRUE)
-
-if(USE_MAIN)
-    add_subdirectory(main)
-endif()
 
 # installation related stuff
 option(BUILD_SHARED_LIBS "Build using shared libraries" FALSE)
