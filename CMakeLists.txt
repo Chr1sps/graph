@@ -7,15 +7,18 @@ option(USE_LIBCPP "Use clang libc++ instead of gnu libstdc++" FALSE)
 option(USE_EXPERIMENTAL "Use experimental clang libc++ features" FALSE)
 
 add_library(compiler_flags INTERFACE)
+
 target_compile_features(compiler_flags INTERFACE cxx_std_20)
 
 set(gcc_like_cxx
     "$<COMPILE_LANG_AND_ID:CXX,ARMClang,AppleClang,Clang,GNU,LCC>")
 set(msvc_cxx "$<COMPILE_LANG_AND_ID:CXX,MSVC>")
+
 target_compile_options(compiler_flags INTERFACE
-    "$<${gcc_like_cxx}:$<BUILD_INTERFACE:-Wall;-Wextra;-Wshadow;-Wformat=2;-Wunused;-Wpedantic;-Werror;-fsanitize=undefined>>"
+    "$<${gcc_like_cxx}:$<BUILD_INTERFACE:-Wall;-Wextra;-Wshadow;-Wformat=2;-Wunused;-Wpedantic;-Werror>>"
     "$<${msvc_cxx}:$<BUILD_INTERFACE:-W3>>"
 )
+target_link_options(compiler_flags INTERFACE "$<${gcc_like_cxx}:$<BUILD_INTERFACE:-fsanitize=undefined>>")
 
 if(USE_LIBCPP)
     message("Using clang libc++.")
@@ -104,7 +107,7 @@ endif()
 
 target_compile_definitions(Graph PRIVATE "EXPORTING_GRAPH")
 
-configure_file(include/Graph_config.hpp.in Graph_config.hpp)
+configure_file(cmake/Graph_config.hpp.in Graph_config.hpp)
 
 # tests target definition
 add_subdirectory(tests)
@@ -131,10 +134,8 @@ set(CMAKE_CTEST_ARGUMENTS "--extra-verbose")
 # installation related stuff
 set(installable_libs Graph)
 
-if(BETTER_FLAGS)
-    list(APPEND installable_libs compiler_flags)
-    target_link_libraries(Graph PUBLIC compiler_flags)
-endif()
+list(APPEND installable_libs compiler_flags)
+target_link_libraries(Graph PUBLIC compiler_flags)
 
 install(TARGETS ${installable_libs} EXPORT GraphTargets DESTINATION lib)
 install(FILES ${GRAPH_HPP} DESTINATION include)
@@ -188,7 +189,7 @@ install(
 include(CMakePackageConfigHelpers)
 
 configure_package_config_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/Config.cmake.in
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Config.cmake.in
     "${CMAKE_CURRENT_BINARY_DIR}/GraphConfig.cmake"
     INSTALL_DESTINATION "lib/cmake/config"
     NO_SET_AND_CHECK_MACRO
