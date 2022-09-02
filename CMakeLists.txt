@@ -150,13 +150,13 @@ install(FILES ${GRAPH_HPP} DESTINATION include)
 install(FILES ${EXCEPTIONS_HPP} DESTINATION include/exceptions)
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/Graph_config.hpp" DESTINATION include)
 
+# installation related stuff
+option(BUILD_SHARED_LIBS "Build using shared libraries" FALSE)
+
 set_target_properties(
     Graph PROPERTIES
     POSITION_INDEPENDENT_CODE ${BUILD_SHARED_LIBS}
 )
-
-# installation related stuff
-option(BUILD_SHARED_LIBS "Build using shared libraries" FALSE)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}")
