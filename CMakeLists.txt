@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.16.3)
 
-project(Graph VERSION 0.8)
+project(
+    Graph
+    VERSION 0.8
+    LANGUAGES CXX
+)
 
 # compiler flags fuckery
 option(USE_LIBCPP "Use clang libc++ instead of gnu libstdc++" FALSE)
@@ -111,27 +115,29 @@ target_compile_definitions(Graph PRIVATE "EXPORTING_GRAPH")
 
 configure_file(cmake/Graph_config.hpp.in Graph_config.hpp)
 
-# tests target definition
-add_subdirectory(tests)
+if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+    option(BUILD_TESTS "Enables building tests." TRUE)
 
-add_executable(graph_tests.out tests/graph_tests.cpp)
+    if(BUILD_TESTS)
+        add_subdirectory(tests)
 
-target_link_libraries(graph_tests.out PRIVATE Graph Catch2::Catch2WithMain)
+        add_executable(graph_tests.out tests/graph_tests.cpp)
 
-# testing stuff
-Include(FetchContent)
-FetchContent_Declare(
-    Catch2
-    GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-    GIT_TAG origin/devel)
-FetchContent_MakeAvailable(Catch2)
+        target_link_libraries(graph_tests.out PRIVATE Graph Catch2::Catch2WithMain)
+        Include(FetchContent)
+        FetchContent_Declare(
+            Catch2
+            GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+            GIT_TAG origin/devel)
+        FetchContent_MakeAvailable(Catch2)
+        list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR/extras})
+        include(CTest)
+        include(Catch)
+        catch_discover_tests(graph_tests.out)
 
-list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR/extras})
-include(CTest)
-include(Catch)
-catch_discover_tests(graph_tests.out)
-
-set(CMAKE_CTEST_ARGUMENTS "--extra-verbose")
+        set(CMAKE_CTEST_ARGUMENTS "--extra-verbose")
+    endif()
+endif()
 
 # installation related stuff
 set(installable_libs Graph)
@@ -144,14 +150,6 @@ install(FILES ${GRAPH_HPP} DESTINATION include)
 install(FILES ${EXCEPTIONS_HPP} DESTINATION include/exceptions)
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/Graph_config.hpp" DESTINATION include)
 
-if(INCLUDE_TEST_SOURCE)
-    install(FILES tests/graph_tests.cpp DESTINATION tests)
-endif()
-
-if(INSTALL_TESTS)
-    install(TARGETS graph_tests.out DESTINATION bin)
-endif()
-
 set_target_properties(
     Graph PROPERTIES
     POSITION_INDEPENDENT_CODE ${BUILD_SHARED_LIBS}
@@ -159,10 +157,6 @@ set_target_properties(
 
 # installation related stuff
 option(BUILD_SHARED_LIBS "Build using shared libraries" FALSE)
-option(INSTALL_TESTS "Add unit tests to installed package" TRUE)
-option(INCLUDE_TEST_SOURCE
-    "Installed library will include test source code" FALSE
-)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}")
