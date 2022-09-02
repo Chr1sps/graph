@@ -29,7 +29,6 @@ if(USE_LIBCPP)
     target_compile_options(compiler_flags INTERFACE
         "$<${gcc_like_cxx}:$<BUILD_INTERFACE:-stdlib=libc++>>")
 
-    # ;-lc++;-L/usr/lib/x86-64-linux-gnu/libc++.so
     if(USE_EXPERIMENTAL)
         message("Using experimental features.")
         target_compile_options(compiler_flags INTERFACE
@@ -115,30 +114,6 @@ target_compile_definitions(Graph PRIVATE "EXPORTING_GRAPH")
 
 configure_file(cmake/Graph_config.hpp.in Graph_config.hpp)
 
-if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
-    option(BUILD_TESTS "Enables building tests." TRUE)
-
-    if(BUILD_TESTS)
-        add_subdirectory(tests)
-
-        add_executable(graph_tests.out tests/graph_tests.cpp)
-
-        target_link_libraries(graph_tests.out PRIVATE Graph Catch2::Catch2WithMain)
-        Include(FetchContent)
-        FetchContent_Declare(
-            Catch2
-            GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-            GIT_TAG origin/devel)
-        FetchContent_MakeAvailable(Catch2)
-        list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR/extras})
-        include(CTest)
-        include(Catch)
-        catch_discover_tests(graph_tests.out)
-
-        set(CMAKE_CTEST_ARGUMENTS "--extra-verbose")
-    endif()
-endif()
-
 # installation related stuff
 set(installable_libs Graph)
 
@@ -148,6 +123,9 @@ target_link_libraries(Graph PUBLIC compiler_flags)
 install(TARGETS ${installable_libs} EXPORT GraphTargets DESTINATION lib)
 install(FILES ${GRAPH_HPP} DESTINATION include)
 install(FILES ${EXCEPTIONS_HPP} DESTINATION include/exceptions)
+
+# install(FILES ${GRAPH_CPP} DESTINATION src)
+# install(FILES ${EXCEPTIONS_CPP} DESTINATION src/exceptions)
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/Graph_config.hpp" DESTINATION include)
 
 # installation related stuff
@@ -199,3 +177,38 @@ export(
     EXPORT GraphTargets
     FILE "${CMAKE_CURRENT_BINARY_DIR}/GraphTargets.cmake"
 )
+
+if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+    message("Developer tools active.")
+    option(BUILD_AND_INSTALL_MAIN "Enables using standalone main file" TRUE)
+    option(BUILD_TESTS "Enables building tests." TRUE)
+
+    if(BUILD_TESTS)
+        message("Tests available.")
+        add_subdirectory(tests)
+
+        add_executable(graph_tests.exe tests/graph_tests.cpp)
+
+        target_link_libraries(graph_tests.exe PRIVATE Graph Catch2::Catch2WithMain)
+        Include(FetchContent)
+        FetchContent_Declare(
+            Catch2
+            GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+            GIT_TAG origin/devel)
+        FetchContent_MakeAvailable(Catch2)
+        list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR/extras})
+        include(CTest)
+        include(Catch)
+        catch_discover_tests(graph_tests.exe)
+
+        set(CMAKE_CTEST_ARGUMENTS "--extra-verbose")
+    endif()
+
+    if(BUILD_AND_INSTALL_MAIN)
+        message("Main available.")
+        add_executable(main.exe main.cpp)
+
+        target_link_libraries(main.exe PRIVATE Graph)
+        install(TARGETS main.exe DESTINATION bin)
+    endif()
+endif()
