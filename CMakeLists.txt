@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.16.3)
 
 project(
     Graph
-    VERSION 0.8
+    VERSION 0.9
     LANGUAGES CXX
 )
 
@@ -123,10 +123,15 @@ target_link_libraries(Graph PUBLIC compiler_flags)
 install(TARGETS ${installable_libs} EXPORT GraphTargets DESTINATION lib)
 install(FILES ${GRAPH_HPP} DESTINATION include)
 install(FILES ${EXCEPTIONS_HPP} DESTINATION include/exceptions)
-
-# install(FILES ${GRAPH_CPP} DESTINATION src)
-# install(FILES ${EXCEPTIONS_CPP} DESTINATION src/exceptions)
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/Graph_config.hpp" DESTINATION include)
+
+option(INSTALL_SOURCE "Install source files. Might be needed for linking purposes." TRUE)
+
+if(INSTALL_SOURCE)
+    message("Installing source.")
+    install(FILES ${GRAPH_CPP} DESTINATION src)
+    install(FILES ${EXCEPTIONS_CPP} DESTINATION src/exceptions)
+endif()
 
 # installation related stuff
 option(BUILD_SHARED_LIBS "Build using shared libraries" FALSE)
