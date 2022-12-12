@@ -34,10 +34,10 @@ if(USE_LIBCPP)
         target_compile_options(compiler_flags INTERFACE
             "$<${gcc_like_cxx}:$<BUILD_INTERFACE:-DLIBCXX_ENABLE_INCOMPLETE_FEATURES=ON>>")
     endif()
-else()
-    message("Using gnu libstdc++.")
-    target_compile_options(compiler_flags INTERFACE
-        "$<${gcc_like_cxx}:$<BUILD_INTERFACE:-stdlib=libstdc++>>")
+#else()
+#    message("Using gnu libstdc++.")
+#    target_compile_options(compiler_flags INTERFACE
+#        "$<${gcc_like_cxx}:$<BUILD_INTERFACE:-stdlib=libstdc++>>")
 endif()
 
 # directories lists

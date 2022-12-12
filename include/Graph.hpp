@@ -74,14 +74,14 @@ class Graph
     void init_(const std::initializer_list<Id> &);
 
 public:
-    Graph(); // * TESTED
-    Graph(const Graph &);
-    Graph(Graph &&); // * TESTED
+    Graph() = default; // * TESTED
+    Graph(const Graph &) = default;
+    Graph(Graph &&) = default; // * TESTED
     Graph(const std::initializer_list<Id> &);
     virtual ~Graph();
 
-    Graph &operator=(const Graph &);
-    Graph &operator=(Graph &&);                          // * TESTED
+    Graph &operator=(const Graph &) = default;
+    Graph &operator=(Graph &&) = default;                // * TESTED
     Graph &operator=(const std::initializer_list<Id> &); // * TESTED ?!?!?
 
     void make_vertex(Id, Vopt = Nil);  // * TESTED
