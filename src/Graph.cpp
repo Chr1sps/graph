@@ -268,6 +268,18 @@ Graph<V, E, Id>::join_bidir(Id start, Id end, Eopt data)
     }
 }
 
+/**
+ * @brief Changes data of an edge in a given direction. Throws an exception if
+ * the edge doesn't exist.
+ *
+ * @tparam V
+ * @tparam E
+ * @tparam Id
+ * @param start
+ * @param end
+ * @param data
+ * @throws EdgeNotFoundException
+ */
 template <typename V, typename E, typename Id>
 inline void
 Graph<V, E, Id>::update_dir(Id start, Id end, Eopt data)
@@ -283,6 +295,18 @@ Graph<V, E, Id>::update_dir(Id start, Id end, Eopt data)
     }
 }
 
+/**
+ * @brief Changes data of an edge in both directions. Throws an exception if
+ * the edge doesn't exist in either of directions.
+ *
+ * @tparam V
+ * @tparam E
+ * @tparam Id
+ * @throws EdgeNotFoundException
+ * @param start
+ * @param end
+ * @param data
+ */
 template <typename V, typename E, typename Id>
 inline void
 Graph<V, E, Id>::update_bidir(Id start, Id end, Eopt data)
@@ -298,6 +322,15 @@ Graph<V, E, Id>::update_bidir(Id start, Id end, Eopt data)
     }
 }
 
+/**
+ * @brief Removes an edge in a given direction.
+ *
+ * @tparam V
+ * @tparam E
+ * @tparam Id
+ * @param start
+ * @param end
+ */
 template <typename V, typename E, typename Id>
 inline void
 Graph<V, E, Id>::erase_dir(Id start, Id end)
@@ -305,6 +338,16 @@ Graph<V, E, Id>::erase_dir(Id start, Id end)
     graph_[start].erase(end);
 }
 
+/**
+ *
+ * @brief Removes an edge in both directions.
+ *
+ * @tparam V
+ * @tparam E
+ * @tparam Id
+ * @param start
+ * @param end
+ */
 template <typename V, typename E, typename Id>
 inline void
 Graph<V, E, Id>::erase_bidir(Id start, Id end)
@@ -313,6 +356,17 @@ Graph<V, E, Id>::erase_bidir(Id start, Id end)
     erase_dir(end, start);
 }
 
+/**
+ * @brief Returns true if there is a vertex with an id equal to the given
+ * value.
+ *
+ * @tparam V
+ * @tparam E
+ * @tparam Id
+ * @param id
+ * @return true
+ * @return false
+ */
 template <typename V, typename E, typename Id>
 inline bool
 Graph<V, E, Id>::is_vertex(Id id) const
@@ -457,9 +511,17 @@ Graph<V, E, Id>::clear()
     graph_.clear();
 }
 
+/**
+ * @brief Swaps data with another graph.
+ *
+ * @tparam V
+ * @tparam E
+ * @tparam Id
+ * @param other
+ */
 template <typename V, typename E, typename Id>
 inline void
-Graph<V, E, Id>::swap(const Graph &other)
+Graph<V, E, Id>::swap(Graph &other)
 {
     graph_.swap(other.graph_);
 }

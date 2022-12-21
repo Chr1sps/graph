@@ -539,3 +539,19 @@ TEST_CASE("Move semantics")
         REQUIRE(other.to_string() == result_str);
     }
 }
+
+TEST_CASE("Graph swapping")
+{
+    Graph<int, int> first = {1, 2, 3, 4}, other = {5, 6, 7, 8};
+    first.swap(other);
+    for (auto &i : {1, 2, 3, 4})
+    {
+        REQUIRE_FALSE(first.is_vertex(i));
+        REQUIRE(other.is_vertex(i));
+    }
+    for (auto &i : {5, 6, 7, 8})
+    {
+        REQUIRE(first.is_vertex(i));
+        REQUIRE_FALSE(other.is_vertex(i));
+    }
+}

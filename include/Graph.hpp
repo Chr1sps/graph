@@ -110,7 +110,7 @@ public:
     V data(Id) const; // * TESTED
 
     void clear();
-    void swap(const Graph &);
+    void swap(Graph &);
 
     std::string to_string() const;
     // friend std::ofstream &operator<<(std::ofstream &, Graph<V, E>);
