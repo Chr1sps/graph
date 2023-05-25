@@ -34,10 +34,11 @@ if(USE_LIBCPP)
         target_compile_options(compiler_flags INTERFACE
             "$<${gcc_like_cxx}:$<BUILD_INTERFACE:-DLIBCXX_ENABLE_INCOMPLETE_FEATURES=ON>>")
     endif()
-#else()
-#    message("Using gnu libstdc++.")
-#    target_compile_options(compiler_flags INTERFACE
-#        "$<${gcc_like_cxx}:$<BUILD_INTERFACE:-stdlib=libstdc++>>")
+
+    # else()
+    # message("Using gnu libstdc++.")
+    # target_compile_options(compiler_flags INTERFACE
+    # "$<${gcc_like_cxx}:$<BUILD_INTERFACE:-stdlib=libstdc++>>")
 endif()
 
 # directories lists
@@ -185,7 +186,7 @@ export(
 
 if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
     message("Developer tools active.")
-    option(BUILD_AND_INSTALL_MAIN "Enables using standalone main file" TRUE)
+    option(BUILD_AND_INSTALL_MAIN "Enables using standalone main file" FALSE)
     option(BUILD_TESTS "Enables building tests." TRUE)
 
     if(BUILD_TESTS)
